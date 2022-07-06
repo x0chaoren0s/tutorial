@@ -1,0 +1,41 @@
+{
+    "provider_host": "MyTunneling.com",
+    "list_url": "https://www.mytunneling.com/ssh-server-30",
+    "create_time": "2022-06-28_01-29-26",
+    "configs": [
+        {
+            "region": "Netherland",
+            "username": "tunvpn.com-YrQd3SfuuR9p",
+            "password": "hbes",
+            "host": "m.nl.ssh.ipmy.pw",
+            "date_created": "2022-06-28",
+            "date_expired": "2022-07-28"
+        },
+        {
+            "region": "Germany",
+            "username": "tunvpn.com-zQAqmAg",
+            "password": "ZH7stAt",
+            "host": "m.de.ssh.ipmy.pw",
+            "date_created": "2022-06-28",
+            "date_expired": "2022-07-28"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        }
+    ]
+}

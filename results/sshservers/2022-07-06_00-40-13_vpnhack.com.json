@@ -1,0 +1,79 @@
+{
+    "provider_host": "vpnhack.com",
+    "list_url": "https://vpnhack.com/ssh",
+    "create_time": "2022-07-06_00-40-13",
+    "configs": [
+        {
+            "region": "united-states",
+            "username": "vpnhack-rrb4oa",
+            "password": "48pdmrvluiwa",
+            "host": "us01.vpnhack.xyz",
+            "host_cloudflare": "us01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-redxl",
+            "password": "ivlpauqve",
+            "host": "uk01.vpnhack.xyz",
+            "host_cloudflare": "uk01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-fzbgcr",
+            "password": "h9zoe58pn",
+            "host": "uk02.vpnhack.xyz",
+            "host_cloudflare": "uk02-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-hbiehsgw4ja",
+            "password": "af1horc8qgu",
+            "host": "sg01.vpnhack.xyz",
+            "host_cloudflare": "sg01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-3sgxnraee",
+            "password": "kxgrq",
+            "host": "sg02.vpnhack.xyz",
+            "host_cloudflare": "sg02-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "poland",
+            "username": "vpnhack-dokyjlsdu",
+            "password": "boobkfv2rqk",
+            "host": "pl01.vpnhack.xyz",
+            "host_cloudflare": "pl01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "germany",
+            "username": "vpnhack-xrgy4b",
+            "password": "77ygwl",
+            "host": "de01.vpnhack.xyz",
+            "host_cloudflare": "de01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        },
+        {
+            "region": "canada",
+            "username": "vpnhack-yicxlgq",
+            "password": "9hx7w",
+            "host": "ca01.vpnhack.xyz",
+            "host_cloudflare": "ca01-ws.vpnhack.xyz",
+            "date_created": "2022-07-05",
+            "date_expired": "2022-07-12"
+        }
+    ]
+}
