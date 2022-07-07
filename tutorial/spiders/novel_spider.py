@@ -31,7 +31,7 @@ class NovelSpider(scrapy.Spider):
     def parse_chapter(self, response): # 仅爬取特定章节页面
         url = response.url.split('/')[-1]
         id = self.url2id[url]
-        chapter_title = f'{id}、'+response.css('h1::text').get().split()[0]
+        chapter_title = f'{"%03d"%id}、'+response.css('h1::text').get().split()[0]
         filename = chapter_title+'.txt'
         
         content = response.css('div[id="BookText"]')
