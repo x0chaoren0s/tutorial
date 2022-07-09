@@ -26,6 +26,8 @@ class SshServerWritingJsonPipeline:
     }
     
     def close_spider(self, spider):
+        os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
+        time.tzset()
         self.create_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
         self.filename = f"{self.create_time}_{self.content_dict['provider_host']}.json"
         self.content_dict['create_time'] = self.create_time

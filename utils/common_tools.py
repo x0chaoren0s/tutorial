@@ -14,5 +14,27 @@ def getRandStr(strLen = -1):
         l.append(char)
     return ''.join(l)#返回字符串
 
+class MyCounter:
+    ''' 自动计数器 '''
+    def __init__(self, begin: int = 0) -> None:
+        ''' 从 begin 开始计数 '''
+        self.begin = begin
+        self.accum = self.begin # 累计计数值
+
+    def show(self):
+        ''' 返回当前累计计数值 '''
+        return self.accum
+
+    def count(self, unit: int = 1) -> int:
+        ''' 增加计数 unit 个单位，并返回当前累计计数值 '''
+        self.accum += unit
+        return self.show()
+GlobalCounter = MyCounter()
+GlobalCounter_arr = [MyCounter() for _ in range(100)]
+
 if __name__ == '__main__':
-    print(getRandStr())
+    # print(getRandStr())
+    print(GlobalCounter.show())
+    print(GlobalCounter.count())
+    print(GlobalCounter.show())
+    print(GlobalCounter.count(3))

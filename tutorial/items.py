@@ -23,5 +23,6 @@ class SshServerConfigItem(scrapy.Item):
     host_cloudflare = scrapy.Field()
     date_created    = scrapy.Field()
     date_expired    = scrapy.Field()
+    max_logins      = scrapy.Field()
     error_info      = scrapy.Field()
 
