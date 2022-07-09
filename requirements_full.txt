@@ -1,0 +1,3 @@
+# 使用docker镜像
+# https://hub.docker.com/r/easypi/scrapyd
+docker pull easypi/scrapyd
