@@ -1,0 +1,16 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-10_06-15-55",
+    "configs": [
+        {
+            "region": "GERMANY",
+            "username": " 20ZRNnA1pMfC",
+            "password": " 0WMimPjEjUUl",
+            "host": " ge1-7.ipservers.xyz",
+            "date_created": "2022-07-10",
+            "date_expired": "2022-07-17",
+            "max_logins": "2"
+        }
+    ]
+}

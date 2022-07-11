@@ -1,0 +1,16 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-10_22-43-47",
+    "configs": [
+        {
+            "region": "FRANCE",
+            "username": "Up5nb",
+            "password": "1Xp7lJ",
+            "host": "fr1-7.ipservers.xyz",
+            "date_created": "2022-07-10",
+            "date_expired": "2022-07-17",
+            "max_logins": "2"
+        }
+    ]
+}

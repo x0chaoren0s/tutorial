@@ -35,7 +35,7 @@ class SSHServers3Spider(scrapy.Spider):
         init_server_list_url = self.base_url+server_group_heads_urls[1]
         yield SshServerProviderHostItem({
             'provider_host': 'jagoanssh.com',
-            'list_url'     : self.base_url+init_server_list_url
+            'list_url'     : init_server_list_url
         })
         yield scrapy.Request(init_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
