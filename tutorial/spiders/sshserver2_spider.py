@@ -40,7 +40,7 @@ class SSHServers2Spider(scrapy.Spider):
         servers_selectors = [scrapy.Selector(text=svr) for svr in servers_strs] # str 转回 selector
         servers_infos = [[
             svr.xpath('//p/text()').getall()[1].split()[0], # host
-            (lambda s:s.isdigit() and int(s)>0)(svr.xpath('//span/text()').get()), # avalaible: True or False
+            (lambda s:s.isdigit() and int(s)>0)(svr.xpath('//span//text()').get()), # avalaible: True or False
             svr.xpath('//a/@href').get() # href：该服务器的填表页面
         ] for svr in servers_selectors] # 总体是一个list放各个服务器信息，每个服务器的信息也是一个list放host、available、href
         for svrinfo in servers_infos:
@@ -49,10 +49,8 @@ class SSHServers2Spider(scrapy.Spider):
             else: # avalaible: False
                 yield SshServerConfigItem({
                     'region'          : response.url.split('/')[-1],
-                    'host'            : response.xpath('//div[@class="alert alert-success text-center"]//li[1]/b/text()').get(),
-                    'host_cloudflare' : response.xpath('//div[@class="alert alert-success text-center"]//li[2]/b/text()').get(),
-                    'date_created'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[5]/b/text()').get()),
-                    'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[6]/b/text()').get())
+                    'host'            : svrinfo[0],
+                    'error_info'      : 'no available'
                 })
 
 
