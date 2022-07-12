@@ -1,0 +1,17 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-12_22-27-00",
+    "configs": [
+        {
+            "region": "GERMANY",
+            "username": "aCCpwYHojBt",
+            "password": "jm2XnfjG",
+            "host": "ge1-7.ipservers.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://aCCpwYHojBt:jm2XnfjG@ge1-7.ipservers.xyz:22"
+        }
+    ]
+}

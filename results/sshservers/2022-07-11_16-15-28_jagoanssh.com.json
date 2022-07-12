@@ -1,0 +1,17 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-11_16-15-28",
+    "configs": [
+        {
+            "region": "LONDON",
+            "username": "Ie9e86c",
+            "password": "fwH5",
+            "host": "uk1-7.ipservers.xyz",
+            "date_created": "2022-07-11",
+            "date_expired": "2022-07-18",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://Ie9e86c:fwH5@uk1-7.ipservers.xyz:22"
+        }
+    ]
+}

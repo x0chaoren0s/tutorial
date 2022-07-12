@@ -44,8 +44,17 @@ class SSHServers2Spider(scrapy.Spider):
             svr.xpath('//a/@href').get() # href：该服务器的填表页面
         ] for svr in servers_selectors] # 总体是一个list放各个服务器信息，每个服务器的信息也是一个list放host、available、href
         for svrinfo in servers_infos:
-            if svrinfo[1]:
+            if svrinfo[1]: # avalaible: True
                 yield scrapy.Request(svrinfo[2], self.parse_server_before_fillingForm)
+            else: # avalaible: False
+                yield SshServerConfigItem({
+                    'region'          : response.url.split('/')[-1],
+                    'host'            : response.xpath('//div[@class="alert alert-success text-center"]//li[1]/b/text()').get(),
+                    'host_cloudflare' : response.xpath('//div[@class="alert alert-success text-center"]//li[2]/b/text()').get(),
+                    'date_created'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[5]/b/text()').get()),
+                    'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[6]/b/text()').get())
+                })
+
 
     def parse_server_before_fillingForm(self, response):
         # 填表以及通过 recaptcha

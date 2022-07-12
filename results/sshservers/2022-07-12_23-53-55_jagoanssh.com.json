@@ -1,0 +1,27 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-12_23-53-55",
+    "configs": [
+        {
+            "region": "STATES",
+            "username": "JmS7PB5g5J",
+            "password": "u4Jfav",
+            "host": "us1-7.ipservers.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-20",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://JmS7PB5g5J:u4Jfav@us1-7.ipservers.xyz:22"
+        },
+        {
+            "region": "GERMANY",
+            "username": "yRIvbs",
+            "password": "otz0",
+            "host": "ge1-7.ipservers.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-20",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://yRIvbs:otz0@ge1-7.ipservers.xyz:22"
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-import scrapy, time, os, asyncio
+import scrapy, time, os, asyncio, platform
 from utils.common_tools import getRandStr, GlobalCounter, MyCounter, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
@@ -65,7 +65,9 @@ class SSHServers3Spider(scrapy.Spider):
                     # print(f'===========等待{self.fillingForm_interval_secs}s后爬取第{self.crawled_server_cnt.show()}个服务器==============')
                     print(f'===========等待{self.fillingForm_interval_secs}s后爬取第{GlobalCounter_arr[self.CRAWLED_IDX].show()}个服务器==============')
                     print(f'============================================================================================================')
-                    asyncio.sleep(self.fillingForm_interval_secs)
+                    # asyncio.sleep(self.fillingForm_interval_secs)
+                    # asyncio.run(asyncio.sleep(), self.fillingForm_interval_secs)
+                    asyncio.run(asyncio.sleep(self.fillingForm_interval_secs))
                 yield scrapy.Request(server_urls[i], self.parse_server_before_fillingForm, headers={"referer":response.url})
                 print(f'------------------------------------------------------------------------------------------------------------')
                 # print(f'-----------------------------现在已爬取完{self.crawled_server_cnt.show()}个服务器-----------------------------')
@@ -78,6 +80,10 @@ class SSHServers3Spider(scrapy.Spider):
                 # print(f'-----------------------------现在绕过{self.crawled_server_cnt.show()}个服务器不进行爬取-----------------------------')
                 print(f'-----------------------------现在绕过{GlobalCounter_arr[self.OMMITED_IDX].show()}个服务器不进行爬取-----------------------------')
                 print(f'------------------------------------------------------------------------------------------------------------')
+                yield SshServerConfigItem({
+                    'region'          : response.xpath('//h1/text()').get().split()[-1],
+                    'error_info'      : 'no available'
+                })
 
 
     def parse_server_before_fillingForm(self, response):
@@ -104,8 +110,9 @@ class SSHServers3Spider(scrapy.Spider):
         #         'error_info': body_strlist[0]
         #     })
 
-        os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
-        time.tzset()
+        if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
+            os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
+            time.tzset()
         def normalize_date(datestr): # 如把 ' 17-07-2022' 标准化成 '2022-07-17'
             return time.strftime("%Y-%m-%d",time.strptime(datestr," %d-%m-%Y"))
         try:

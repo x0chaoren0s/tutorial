@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import os, time, json
+import os, time, json, platform
 from .items import SshServerProviderHostItem, SshServerConfigItem
 
 
@@ -26,8 +26,9 @@ class SshServerWritingJsonPipeline:
     }
     
     def close_spider(self, spider):
-        os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
-        time.tzset()
+        if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
+            os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
+            time.tzset()
         self.create_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
         self.filename = f"{self.create_time}_{self.content_dict['provider_host']}.json"
         self.content_dict['create_time'] = self.create_time
@@ -39,5 +40,6 @@ class SshServerWritingJsonPipeline:
             self.content_dict['provider_host'] = item['provider_host']
             self.content_dict['list_url']      = item['list_url']
         elif isinstance(item, SshServerConfigItem):
+            item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:22"
             self.content_dict['configs'].append(dict(item))
         
