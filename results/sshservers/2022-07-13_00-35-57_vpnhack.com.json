@@ -1,0 +1,67 @@
+{
+    "provider_host": "vpnhack.com",
+    "list_url": "https://vpnhack.com/ssh",
+    "create_time": "2022-07-13_00-35-57",
+    "configs": [
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-fmezhicgbwc",
+            "password": "kec6rv",
+            "host": "uk01.vpnhack.xyz",
+            "host_cloudflare": "uk01-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-fmezhicgbwc:kec6rv@uk01.vpnhack.xyz:22"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-r0kubharninu",
+            "password": "qqdrz9cqlhtk",
+            "host": "uk02.vpnhack.xyz",
+            "host_cloudflare": "uk02-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-r0kubharninu:qqdrz9cqlhtk@uk02.vpnhack.xyz:22"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-uiemtd",
+            "password": "mowh",
+            "host": "sg02.vpnhack.xyz",
+            "host_cloudflare": "sg02-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-uiemtd:mowh@sg02.vpnhack.xyz:22"
+        },
+        {
+            "region": "poland",
+            "username": "vpnhack-x4fxhhlcsxb",
+            "password": "tfdoek4mecga",
+            "host": "pl01.vpnhack.xyz",
+            "host_cloudflare": "pl01-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-x4fxhhlcsxb:tfdoek4mecga@pl01.vpnhack.xyz:22"
+        },
+        {
+            "region": "germany",
+            "username": "vpnhack-opqtwr1",
+            "password": "asa3an",
+            "host": "de01.vpnhack.xyz",
+            "host_cloudflare": "de01-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-opqtwr1:asa3an@de01.vpnhack.xyz:22"
+        },
+        {
+            "region": "canada",
+            "username": "vpnhack-6pf3ru",
+            "password": "bowj",
+            "host": "ca01.vpnhack.xyz",
+            "host_cloudflare": "ca01-ws.vpnhack.xyz",
+            "date_created": "2022-07-12",
+            "date_expired": "2022-07-19",
+            "glider_config": "forward=ssh://vpnhack-6pf3ru:bowj@ca01.vpnhack.xyz:22"
+        }
+    ]
+}
