@@ -40,6 +40,7 @@ class SshServerWritingJsonPipeline:
             self.content_dict['provider_host'] = item['provider_host']
             self.content_dict['list_url']      = item['list_url']
         elif isinstance(item, SshServerConfigItem):
-            item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:22"
+            if 'error_info' not in item:
+                item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:22"
             self.content_dict['configs'].append(dict(item))
         
