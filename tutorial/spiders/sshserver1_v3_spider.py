@@ -17,7 +17,7 @@ class SSHServers1V3Spider(scrapy.Spider):
 
     def start_requests(self):
         list_url = 'https://www.mytunneling.com/ssh-server-30' # 仅存储服务器列表页面 url
-        yield scrapy.Request(list_url, self.parse)
+        yield scrapy.Request(list_url, self.parse, headers={"referer": 'https://www.mytunneling.com'})
 
     def parse(self, response):
         # 爬取服务器列表页面，产生服务器供应商信息，获得各服务器 serverid 和所在区域 region
