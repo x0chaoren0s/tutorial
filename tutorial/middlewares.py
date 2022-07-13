@@ -5,6 +5,10 @@
 
 from scrapy import signals
 
+from twisted.internet import reactor
+from twisted.internet.defer import Deferred
+from utils.common_tools import GlobalCounter_arr
+
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
@@ -101,3 +105,30 @@ class TutorialDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+class DeferringDownloaderMiddleware(object):
+    ''' https://github.com/ArturGaspar/scrapy-delayed-requests/blob/master/scrapy_delayed_requests.py '''
+
+    # Not all methods need to be defined. If a method is not defined,
+    # scrapy acts as if the downloader middleware does not modify the
+    # passed objects.
+
+    def process_request(self, request, spider):
+        # Called for each request that goes through the downloader
+        # middleware.
+
+        # Must either:
+        # - return None: continue processing this request
+        # - or return a Response object
+        # - or return a Request object
+        # - or raise IgnoreRequest: process_exception() methods of
+        #   installed downloader middleware will be called
+        
+        # delay = request.meta.get('delay_request', None)
+        delay = request.meta.get('request_interval_secs', None)
+        if delay:
+            print(f'===========等待{delay}s后爬取第{request.meta["cnt_crawled"]}个服务器：==============')
+            d = Deferred()
+            reactor.callLater(int(delay), d.callback, None)
+            return d
+        return None
