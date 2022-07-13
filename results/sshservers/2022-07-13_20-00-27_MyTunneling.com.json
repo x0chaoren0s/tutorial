@@ -1,0 +1,25 @@
+{
+    "provider_host": "MyTunneling.com",
+    "list_url": "https://www.mytunneling.com/ssh-server-30",
+    "create_time": "2022-07-13_20-00-27",
+    "configs": [
+        {
+            "region": "Netherland",
+            "username": "tunvpn.com-GUH9wwPGR",
+            "password": "TLL0xGHj",
+            "host": "m.nl.ssh.ipmy.pw",
+            "date_created": "2022-07-13",
+            "date_expired": "2022-08-12",
+            "glider_config": "forward=ssh://tunvpn.com-GUH9wwPGR:TLL0xGHj@m.nl.ssh.ipmy.pw:22"
+        },
+        {
+            "region": "Singapore Vultr",
+            "username": "tunvpn.com-317G71Avhnbw",
+            "password": "6H25",
+            "host": "m.sg3.ssh.ipmy.pw",
+            "date_created": "2022-07-13",
+            "date_expired": "2022-08-12",
+            "glider_config": "forward=ssh://tunvpn.com-317G71Avhnbw:6H25@m.sg3.ssh.ipmy.pw:22"
+        }
+    ]
+}
