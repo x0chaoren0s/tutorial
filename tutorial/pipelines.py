@@ -42,5 +42,6 @@ class SshServerWritingJsonPipeline:
         elif isinstance(item, SshServerConfigItem):
             if 'error_info' not in item:
                 item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:22"
+                item['date_span'] = f"# {item['date_created']} - {item['date_expired']}"
             self.content_dict['configs'].append(dict(item))
         

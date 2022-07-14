@@ -25,5 +25,6 @@ class SshServerConfigItem(scrapy.Item):
     date_expired    = scrapy.Field()
     max_logins      = scrapy.Field()
     glider_config   = scrapy.Field() # forward=ssh://username:password@host:22  edit in class SshServerWritingJsonPipeline
+    date_span       = scrapy.Field() # # 2022-07-12 - 2022-07-19
     error_info      = scrapy.Field()
 
