@@ -1,5 +1,5 @@
 import scrapy, time, os, asyncio, platform
-from utils.common_tools import getRandStr, GlobalCounter, MyCounter, GlobalCounter_arr
+from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
@@ -20,7 +20,12 @@ class SSHServers3Spider(scrapy.Spider):
         'USER_AGENT': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.47',
         'ITEM_PIPELINES' : {
             'tutorial.pipelines.SshServerWritingJsonPipeline': 300,
-        }
+        },
+        'DOWNLOADER_MIDDLEWARES' : {
+            'tutorial.middlewares.TutorialDownloaderMiddleware': 543,
+            'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
+        },
+        'CONCURRENT_REQUESTS' : 1 # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
     }
 
     def start_requests(self):
@@ -28,8 +33,10 @@ class SSHServers3Spider(scrapy.Spider):
         yield scrapy.Request(list_url, self.parse)
 
     def parse(self, response):
-        # 爬取服务器组列表页面，该列表有4项可选：3days,7days,vip,ss。此处选 7days
-        # 并调用 parse_server_list 爬取服务器列表页面信息。该列表不是总列表，一页最多列出2个服务器，需要点下一页
+        '''
+        爬取服务器组列表页面，该列表有4项可选：3days,7days,vip,ss。此处选 7days
+        并调用 parse_server_list 爬取服务器列表页面信息。该列表不是总列表，一页最多列出2个服务器，需要点下一页
+        '''
         server_group_heads_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall()
         # print(server_group_heads_urls)
         init_server_list_url = self.base_url+server_group_heads_urls[1]
@@ -40,11 +47,12 @@ class SSHServers3Spider(scrapy.Spider):
         yield scrapy.Request(init_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
     def parse_server_list(self, response):
-        # ①爬取服务器列表页面信息（一页最多两个服务器），即每个服务器的可用性（available）（完全是数字，不可用为0）、填表页面 url
-        #   调用 parse_server_before_fillingForm 进行填表
-        # ②爬取下一页服务器列表页面的url
-        #   调用 parse_server_list 继续爬取下一页
-        # print("in parse_server_list")
+        '''
+        ①爬取服务器列表页面信息（一页最多两个服务器），即每个服务器的可用性（available）（完全是数字，不可用为0）、填表页面 url
+          调用 parse_server_before_fillingForm 进行填表
+        ②爬取下一页服务器列表页面的url
+          调用 parse_server_list 继续爬取下一页
+        '''
         server_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall() # ['/?do=create-account&filter=92', '/?do=create-account&filter=93']
         server_urls = [self.base_url+url[1:] for url in server_urls] # ['https://www.jagoanssh.com/?do=create-account&filter=92', 'https://www.jagoanssh.com/?do=create-account&filter=93']
         server_availables = response.xpath('//span[@class="label label-success"]/text()').getall() # ['0 Available', '0 Available']
@@ -53,34 +61,22 @@ class SSHServers3Spider(scrapy.Spider):
         server_hosts = response.xpath('//div[@class="probootstrap-pricing popular"]/ul').getall()
         server_hosts = [scrapy.Selector(text=html).xpath('//li/text()').get() for html in server_hosts] # ['sg1-7.ipservers.xyz', 'sg2-7.ipservers.xyz']
         next_server_list_url = self.base_url+response.xpath('//a[@aria-label="Next"]/@href').get()
-        # print(next_server_list_url)
 
         if len(server_urls)>0:
             yield scrapy.Request(next_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
         for i,available in enumerate(server_availables):
             if available>0:
-                # if self.crawled_server_cnt.count()>1:
-                if GlobalCounter_arr[self.CRAWLED_IDX].count()>1:
-                    print(f'============================================================================================================')
-                    # print(f'===========等待{self.fillingForm_interval_secs}s后爬取第{self.crawled_server_cnt.show()}个服务器==============')
-                    print(f'===========等待{self.fillingForm_interval_secs}s后爬取第{GlobalCounter_arr[self.CRAWLED_IDX].show()}个服务器==============')
-                    print(f'============================================================================================================')
-                    # asyncio.sleep(self.fillingForm_interval_secs)
-                    # asyncio.run(asyncio.sleep(), self.fillingForm_interval_secs)
-                    asyncio.run(asyncio.sleep(self.fillingForm_interval_secs))
-                yield scrapy.Request(server_urls[i], self.parse_server_before_fillingForm, headers={"referer":response.url})
-                print(f'------------------------------------------------------------------------------------------------------------')
-                # print(f'-----------------------------现在已爬取完{self.crawled_server_cnt.show()}个服务器-----------------------------')
-                print(f'-----------------------------现在已爬取完{GlobalCounter_arr[self.CRAWLED_IDX].show()}个服务器-----------------------------')
-                print(f'------------------------------------------------------------------------------------------------------------')
-            else:
-                # self.ommited_server_cnt.count()
-                # GlobalCounter_arr[self.OMMITED_IDX].count()
-                # print(f'------------------------------------------------------------------------------------------------------------')
-                # # print(f'-----------------------------现在绕过{self.crawled_server_cnt.show()}个服务器不进行爬取-----------------------------')
-                # print(f'-----------------------------现在绕过{GlobalCounter_arr[self.OMMITED_IDX].show()}个服务器不进行爬取-----------------------------')
-                # print(f'------------------------------------------------------------------------------------------------------------')
+                yield scrapy.Request(
+                    server_urls[i], 
+                    self.parse_server_before_fillingForm, 
+                    headers={"referer":response.url},
+                    meta = {
+                        'request_interval_secs': self.fillingForm_interval_secs,
+                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].show()
+                    }  # meta 数据用于给 DeferringDownloaderMiddleware 传参
+                )
+            else: # available==0
                 yield SshServerConfigItem({
                     'region'          : server_regions[i],
                     'host'            : server_hosts[i],
@@ -89,7 +85,7 @@ class SSHServers3Spider(scrapy.Spider):
 
 
     def parse_server_before_fillingForm(self, response):
-        # 填表以及通过 recaptcha
+        ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
         return scrapy.FormRequest.from_response(
@@ -105,13 +101,7 @@ class SSHServers3Spider(scrapy.Spider):
         )
         
     def parse_server_after_fillingForm(self, response):
-        # 爬取注册账户后服务器的配置信息
-        # body_strlist = response.xpath('//text()').getall()
-        # if len(body_strlist) == 1:
-        #     return SshServerConfigItem({
-        #         'error_info': body_strlist[0]
-        #     })
-
+        ''' 爬取注册账户后服务器的配置信息 '''
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
@@ -119,8 +109,6 @@ class SSHServers3Spider(scrapy.Spider):
             return time.strftime("%Y-%m-%d",time.strptime(datestr," %d-%m-%Y"))
         try:
             success_info = response.xpath('//div[@class="alert alert-success alert-dismissable"]/text()').getall()
-            # print('-------------success_info----------------')
-            # print(success_info)
             return SshServerConfigItem({
                 'region'          : response.xpath('//h1/text()').get().split()[-1],
                 'username'        : success_info[2].split(':')[-1][1:],
