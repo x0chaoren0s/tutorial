@@ -27,8 +27,10 @@ class SSHServers1V5Spider(scrapy.Spider):
         yield scrapy.Request(list_url, self.parse, headers={"referer": 'https://www.mytunneling.com'})
 
     def parse(self, response):
-        # 爬取服务器列表页面，产生服务器供应商信息，获得各服务器 serverid 和所在区域 region
-        # 并调用 parse_server_after_fillingForm 爬取各服务器的配置
+        '''
+        爬取服务器列表页面，产生服务器供应商信息，获得各服务器 serverid 和所在区域 region
+        并调用 parse_server_after_fillingForm 爬取各服务器的配置
+        '''
         provider_host = response.css('a.navbar-brand::text').get()
         yield SshServerProviderHostItem({
             'provider_host': provider_host,
@@ -56,7 +58,7 @@ class SSHServers1V5Spider(scrapy.Spider):
             )
         
     def parse_server_after_fillingForm(self, response, region):
-        # 爬取注册账户后服务器的配置信息
+        ''' 爬取注册账户后服务器的配置信息 '''
         body_strlist = response.xpath('//text()').getall()
         if len(body_strlist) == 1:
             return SshServerConfigItem({
