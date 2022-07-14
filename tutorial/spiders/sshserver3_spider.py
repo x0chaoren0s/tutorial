@@ -49,8 +49,9 @@ class SSHServers3Spider(scrapy.Spider):
         server_urls = [self.base_url+url[1:] for url in server_urls] # ['https://www.jagoanssh.com/?do=create-account&filter=92', 'https://www.jagoanssh.com/?do=create-account&filter=93']
         server_availables = response.xpath('//span[@class="label label-success"]/text()').getall() # ['0 Available', '0 Available']
         server_availables = [int(s.split()[0]) for s in server_availables] # [0, 0]
-        # print(server_urls)
-        # print(server_availables)
+        server_regions = response.xpath('//div[@class="probootstrap-pricing popular"]/h4/text()').getall() # ['SINGAPORE ', 'SINGAPORE ']
+        server_hosts = response.xpath('//div[@class="probootstrap-pricing popular"]/ul').getall()
+        server_hosts = [scrapy.Selector(text=html).xpath('//li/text()').get() for html in server_hosts] # ['sg1-7.ipservers.xyz', 'sg2-7.ipservers.xyz']
         next_server_list_url = self.base_url+response.xpath('//a[@aria-label="Next"]/@href').get()
         # print(next_server_list_url)
 
@@ -75,13 +76,14 @@ class SSHServers3Spider(scrapy.Spider):
                 print(f'------------------------------------------------------------------------------------------------------------')
             else:
                 # self.ommited_server_cnt.count()
-                GlobalCounter_arr[self.OMMITED_IDX].count()
-                print(f'------------------------------------------------------------------------------------------------------------')
-                # print(f'-----------------------------现在绕过{self.crawled_server_cnt.show()}个服务器不进行爬取-----------------------------')
-                print(f'-----------------------------现在绕过{GlobalCounter_arr[self.OMMITED_IDX].show()}个服务器不进行爬取-----------------------------')
-                print(f'------------------------------------------------------------------------------------------------------------')
+                # GlobalCounter_arr[self.OMMITED_IDX].count()
+                # print(f'------------------------------------------------------------------------------------------------------------')
+                # # print(f'-----------------------------现在绕过{self.crawled_server_cnt.show()}个服务器不进行爬取-----------------------------')
+                # print(f'-----------------------------现在绕过{GlobalCounter_arr[self.OMMITED_IDX].show()}个服务器不进行爬取-----------------------------')
+                # print(f'------------------------------------------------------------------------------------------------------------')
                 yield SshServerConfigItem({
-                    'region'          : response.xpath('//h1/text()').get().split()[-1],
+                    'region'          : server_regions[i],
+                    'host'            : server_hosts[i],
                     'error_info'      : 'no available'
                 })
 
