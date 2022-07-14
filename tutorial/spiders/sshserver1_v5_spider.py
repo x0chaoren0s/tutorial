@@ -1,4 +1,4 @@
-import scrapy, time, asyncio
+import scrapy, time
 from utils.common_tools import getRandStr, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 
@@ -45,7 +45,6 @@ class SSHServers1V5Spider(scrapy.Spider):
         servers_regions = response.xpath('//div[@class="row"]//ul/li[2]/text()').getall()
         servers_regions = [r[16:] for r in servers_regions] # "Server Location Germany" -> "Germany"
         for (serverid, region) in zip(servers_ids, servers_regions):
-            #         asyncio.run(asyncio.sleep(self.fillingForm_interval_secs))
             yield scrapy.FormRequest(
                 url='https://www.mytunneling.com/create-account-ssh-30.php',
                 formdata = {'serverid': serverid, 'username': getRandStr(), 'password': getRandStr()},
@@ -73,5 +72,6 @@ class SSHServers1V5Spider(scrapy.Spider):
             'password':     body_strlist[4].split(':')[1].split()[0],
             'host':         body_strlist[5].split(':')[1].split()[0],
             'date_created': normalize_date(body_strlist[6].split(':')[1].split()[0]),
-            'date_expired': normalize_date(body_strlist[7].split(':')[1].split()[0])
+            'date_expired': normalize_date(body_strlist[7].split(':')[1].split()[0]),
+            'max_logins':   body_strlist[-5].split()[6][1:-1]
         })
