@@ -32,7 +32,8 @@ class ReCaptcha_v2_Solver:
         }
         try:
             # 发送JSON格式的数据
-            result = requests.post(url, json=data, verify=False).json()
+            # result = requests.post(url, json=data, verify=False).json()
+            result = requests.post(url, json=data).json()
             taskId = result.get('taskId')
             if taskId is not None:
                 return taskId
@@ -59,7 +60,8 @@ class ReCaptcha_v2_Solver:
                     "clientKey": self.clientKey,
                     "taskId": taskID
                 }
-                result = requests.post(url, json=data, verify=False).json()
+                # result = requests.post(url, json=data, verify=False).json()
+                result = requests.post(url, json=data).json()
                 solution = result.get('solution', {})
                 if solution:
                     gRecaptchaResponse = solution.get('gRecaptchaResponse')
