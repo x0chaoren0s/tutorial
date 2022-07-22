@@ -21,8 +21,10 @@ class SSHServers2Spider(scrapy.Spider):
         yield scrapy.Request(list_url, self.parse)
 
     def parse(self, response):
-        # 爬取地区列表页面，产生服务器供应商信息，
-        # 并调用 parse_region 爬取各区域的服务器信息
+        '''
+        爬取地区列表页面，产生服务器供应商信息，
+        并调用 parse_region 爬取各区域的服务器信息
+        '''
         provider_host = response.xpath('//a[@class="navbar-brand"]/@href').get().split('//')[1]
         yield SshServerProviderHostItem({
             'provider_host': provider_host,
@@ -33,8 +35,10 @@ class SSHServers2Spider(scrapy.Spider):
         yield from response.follow_all(region_urls, self.parse_region)
 
     def parse_region(self, response):
-        # 爬取地区页面内各服务器信息，对还有容量的服务器（available）
-        # 调用 parse_server_before_fillingForm 进行填表
+        '''
+        爬取地区页面内各服务器信息，对还有容量的服务器（available）
+        调用 parse_server_before_fillingForm 进行填表
+        '''
         servers_strs = response.xpath('//div[@class="clean-pricing-item"]').getall() # 是一个str的list
         servers_strs = list(set(servers_strs)) # 这个网站的页面可能有重复的服务器，用set去重
         servers_selectors = [scrapy.Selector(text=svr) for svr in servers_strs] # str 转回 selector
@@ -55,7 +59,7 @@ class SSHServers2Spider(scrapy.Spider):
 
 
     def parse_server_before_fillingForm(self, response):
-        # 填表以及通过 recaptcha
+        ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
         return scrapy.FormRequest.from_response(
@@ -69,13 +73,7 @@ class SSHServers2Spider(scrapy.Spider):
         )
         
     def parse_server_after_fillingForm(self, response):
-        # 爬取注册账户后服务器的配置信息
-        # body_strlist = response.xpath('//text()').getall()
-        # if len(body_strlist) == 1:
-        #     return SshServerConfigItem({
-        #         'error_info': body_strlist[0]
-        #     })
-
+        ''' 爬取注册账户后服务器的配置信息 '''
         def normalize_date(datestr): # 如把 6 Jun 2022 标准化成 2022-06-06
             return time.strftime("%Y-%m-%d",time.strptime(datestr,"%d %b %Y"))
         return SshServerConfigItem({

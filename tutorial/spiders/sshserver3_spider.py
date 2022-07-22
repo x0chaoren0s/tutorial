@@ -11,7 +11,7 @@ class SSHServers3Spider(scrapy.Spider):
     # ommited_server_cnt = MyCounter()
     CRAWLED_IDX = 0 # 这两个是上面两个变量对应转换到 GlobalCounter_arr 中的索引
     OMMITED_IDX = 1
-    fillingForm_interval_secs = 60*5+2 # 该网站要求5min后才能创建下一个新用户
+    fillingForm_interval_secs = 60*5+2 # 该网站要求 5 min 后才能创建下一个新用户
     
     custom_settings = {
         # 'DOWNLOAD_DELAY': 5*60+2, 
