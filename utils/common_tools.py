@@ -3,6 +3,7 @@ import random, string
 # https://www.cnblogs.com/yaner2018/p/11269847.html
 #数字+字母+符号
 def getRandStr(strLen = -1):
+    ''' strLen：随机字符串的长度，默认为 -1，代表闭区间 [4,12] 内的随机长度 '''
     if strLen == -1:
         strLen = random.randint(4,12)
     l = []
