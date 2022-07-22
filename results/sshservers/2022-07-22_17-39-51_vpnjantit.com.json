@@ -1,0 +1,22 @@
+{
+    "provider_host": "vpnjantit.com",
+    "list_url": "https://www.vpnjantit.com/free-ssh-7-days",
+    "create_time": "2022-07-22_17-39-51",
+    "configs": [
+        {
+            "region": "Australia",
+            "username": "J0NH-vpnjantit.com",
+            "password": "vtbxpbA ",
+            "host": " au1.vpnjantit.com ",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29 / 16:39:17",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://J0NH-vpnjantit.com:vtbxpbA @ au1.vpnjantit.com :22",
+            "date_span": "# 2022-07-22 - 2022-07-29 / 16:39:17"
+        }
+    ],
+    "host2ip": {
+        "au1.vpnjantit.com": "172.107.220.34",
+        "ae1.vpnjantit.com": "147.78.0.131"
+    }
+}

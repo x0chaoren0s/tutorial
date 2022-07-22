@@ -1,0 +1,78 @@
+{
+    "provider_host": "vpnhack.com",
+    "list_url": "https://vpnhack.com/ssh",
+    "create_time": "2022-07-22_12-50-50",
+    "configs": [
+        {
+            "region": "canada",
+            "host": "ca01.vpnhack.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-0umnkmt",
+            "password": "9l1zgymthb",
+            "host": "uk01.vpnhack.xyz",
+            "host_cloudflare": "uk01-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-0umnkmt:9l1zgymthb@uk01.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-pr6gyhrif87",
+            "password": "qbikum",
+            "host": "uk02.vpnhack.xyz",
+            "host_cloudflare": "uk02-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-pr6gyhrif87:qbikum@uk02.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-a0ojz0hbmvc8",
+            "password": "q8hjxflufw",
+            "host": "sg01.vpnhack.xyz",
+            "host_cloudflare": "sg01-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-a0ojz0hbmvc8:q8hjxflufw@sg01.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-v7xhijf",
+            "password": "jhur11v3sk",
+            "host": "sg02.vpnhack.xyz",
+            "host_cloudflare": "sg02-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-v7xhijf:jhur11v3sk@sg02.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        },
+        {
+            "region": "poland",
+            "username": "vpnhack-rokzwmbax0l",
+            "password": "i7gcyneknv",
+            "host": "pl01.vpnhack.xyz",
+            "host_cloudflare": "pl01-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-rokzwmbax0l:i7gcyneknv@pl01.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        },
+        {
+            "region": "germany",
+            "username": "vpnhack-xyhwhdk",
+            "password": "yazdvkecy",
+            "host": "de01.vpnhack.xyz",
+            "host_cloudflare": "de01-ws.vpnhack.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "glider_config": "forward=ssh://vpnhack-xyhwhdk:yazdvkecy@de01.vpnhack.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        }
+    ]
+}

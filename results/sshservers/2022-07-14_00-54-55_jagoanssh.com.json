@@ -1,0 +1,65 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-14_00-54-55",
+    "configs": [
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "DAYS",
+            "error_info": "no available"
+        },
+        {
+            "region": "STATES",
+            "username": "fk8YVEF",
+            "password": "sUIn",
+            "host": "us1-7.ipservers.xyz",
+            "date_created": "2022-07-14",
+            "date_expired": "2022-07-21",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://fk8YVEF:sUIn@us1-7.ipservers.xyz:22"
+        },
+        {
+            "region": "LONDON",
+            "username": "LQly5tI",
+            "password": "zEnuE",
+            "host": "uk1-7.ipservers.xyz",
+            "date_created": "2022-07-14",
+            "date_expired": "2022-07-21",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://LQly5tI:zEnuE@uk1-7.ipservers.xyz:22"
+        },
+        {
+            "region": "FRANCE",
+            "username": "I7aCP",
+            "password": "Nw6q3E",
+            "host": "fr1-7.ipservers.xyz",
+            "date_created": "2022-07-14",
+            "date_expired": "2022-07-21",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://I7aCP:Nw6q3E@fr1-7.ipservers.xyz:22"
+        }
+    ]
+}

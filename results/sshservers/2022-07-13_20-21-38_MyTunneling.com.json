@@ -1,0 +1,37 @@
+{
+    "provider_host": "MyTunneling.com",
+    "list_url": "https://www.mytunneling.com/ssh-server-30",
+    "create_time": "2022-07-13_20-21-38",
+    "configs": [
+        {
+            "region": "Singapore DO",
+            "username": "tunvpn.com-t69yENs5Y",
+            "password": "9jq4pnsf5KVY",
+            "host": "m.sg1.ssh.ipmy.pw",
+            "date_created": "2022-07-13",
+            "date_expired": "2022-08-12",
+            "glider_config": "forward=ssh://tunvpn.com-t69yENs5Y:9jq4pnsf5KVY@m.sg1.ssh.ipmy.pw:22"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 60 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 60 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 60 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 60 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 47 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 39 Seconds"
+        },
+        {
+            "error_info": "Please slowly, You can create account again after 31 Seconds"
+        }
+    ]
+}

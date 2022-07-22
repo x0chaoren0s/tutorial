@@ -1,0 +1,10 @@
+{
+    "provider_host": "vpnjantit.com",
+    "list_url": "https://www.vpnjantit.com/free-ssh-7-days",
+    "create_time": "2022-07-22_18-07-31",
+    "configs": [],
+    "host2ip": {
+        "au1.vpnjantit.com": "172.107.220.34",
+        "ae1.vpnjantit.com": "147.78.0.131"
+    }
+}

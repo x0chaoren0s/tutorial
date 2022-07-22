@@ -1,0 +1,48 @@
+{
+    "provider_host": "jagoanssh.com",
+    "list_url": "https://www.jagoanssh.com/?do=ssh-servers&filter=extra",
+    "create_time": "2022-07-22_13-16-44",
+    "configs": [
+        {
+            "region": "SINGAPORE ",
+            "host": "sg1-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "SINGAPORE ",
+            "host": "sg2-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "SINGAPORE ",
+            "host": "sg3-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "SINGAPORE",
+            "host": "sg4-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "INDONESIA ",
+            "host": "id1-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "INDONESIA ",
+            "host": "id2-7.ipservers.xyz",
+            "error_info": "no available"
+        },
+        {
+            "region": "GERMANY",
+            "username": "LCV8cPBTXAuB",
+            "password": "s0ohSGpDMx",
+            "host": "ge1-7.ipservers.xyz",
+            "date_created": "2022-07-22",
+            "date_expired": "2022-07-29",
+            "max_logins": "2",
+            "glider_config": "forward=ssh://LCV8cPBTXAuB:s0ohSGpDMx@ge1-7.ipservers.xyz:22",
+            "date_span": "# 2022-07-22 - 2022-07-29"
+        }
+    ]
+}
