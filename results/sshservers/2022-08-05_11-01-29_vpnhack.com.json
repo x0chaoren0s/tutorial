@@ -1,0 +1,61 @@
+{
+    "provider_host": "vpnhack.com",
+    "list_url": "https://vpnhack.com/ssh",
+    "create_time": "2022-08-05_11-01-29",
+    "configs": [
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-6jso48txxw",
+            "password": "p4qaolu1enie",
+            "host": "uk02.vpnhack.xyz",
+            "host_cloudflare": "uk02-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        },
+        {
+            "region": "united-kingdom",
+            "username": "vpnhack-v68j0fnfrsuf",
+            "password": "x4xp",
+            "host": "uk01.vpnhack.xyz",
+            "host_cloudflare": "uk01-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-6gdtbfn",
+            "password": "lwt5beuylh",
+            "host": "sg01.vpnhack.xyz",
+            "host_cloudflare": "sg01-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        },
+        {
+            "region": "singapore",
+            "username": "vpnhack-ga3gt3msozsf",
+            "password": "evan",
+            "host": "sg02.vpnhack.xyz",
+            "host_cloudflare": "sg02-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        },
+        {
+            "region": "poland",
+            "username": "vpnhack-m3nf",
+            "password": "q7y9lujgbwvd",
+            "host": "pl01.vpnhack.xyz",
+            "host_cloudflare": "pl01-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        },
+        {
+            "region": "germany",
+            "username": "vpnhack-wzkm",
+            "password": "3uw3c",
+            "host": "de01.vpnhack.xyz",
+            "host_cloudflare": "de01-ws.vpnhack.xyz",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-08-12"
+        }
+    ]
+}
