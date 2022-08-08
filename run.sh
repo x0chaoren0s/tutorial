@@ -10,6 +10,9 @@ sudo docker run -d --network=host --name sshserver2 -v /home/pi/tutorial:/tutori
 # sshserver3
 sudo docker run -d --network=host --name sshserver3 -v /home/pi/tutorial:/tutorial -w /tutorial easypi/scrapyd scrapy crawl sshservers3
 
+# sshserver4
+sudo docker run -d --network=host --name sshserver4 -v /home/pi/tutorial:/tutorial -w /tutorial easypi/scrapyd scrapy crawl sshservers4
+
 
 # glider
 docker run -p 7605:7605 -p 7606:7606 --name glider -d -v C:\Users\60490\Desktop\tutorial\momomo2:/momomo2 nadoo/glider -config /momomo2/glider.conf 

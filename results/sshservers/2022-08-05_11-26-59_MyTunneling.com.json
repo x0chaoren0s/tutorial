@@ -1,23 +1,27 @@
 {
     "provider_host": "MyTunneling.com",
     "list_url": "https://www.mytunneling.com/ssh-server-30",
-    "create_time": "2022-06-07_02-22-36",
+    "create_time": "2022-08-05_11-26-59",
     "configs": [
         {
-            "region": "Netherland",
-            "username": "tunvpn.com-oixNGqA",
-            "password": "P2S1",
-            "host": "m.nl.ssh.ipmy.pw",
-            "date_created": "2022-06-07",
-            "date_expired": "2022-07-07"
+            "region": "United States",
+            "username": "tunvpn.com-3YA32",
+            "password": "EfHCtyem5f5U",
+            "host": "m.us2.ssh.ipmy.pw",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-09-04",
+            "glider_config": "forward=ssh://tunvpn.com-3YA32:EfHCtyem5f5U@m.us2.ssh.ipmy.pw:22",
+            "date_span": "# 2022-08-05 - 2022-09-04"
         },
         {
-            "region": "Germany",
-            "username": "tunvpn.com-qtscySq",
-            "password": "na97",
-            "host": "m.de.ssh.ipmy.pw",
-            "date_created": "2022-06-07",
-            "date_expired": "2022-07-07"
+            "region": "United States",
+            "username": "tunvpn.com-w1HCFm",
+            "password": "HOyNIrm",
+            "host": "m.us1.ssh.ipmy.pw",
+            "date_created": "2022-08-05",
+            "date_expired": "2022-09-04",
+            "glider_config": "forward=ssh://tunvpn.com-w1HCFm:HOyNIrm@m.us1.ssh.ipmy.pw:22",
+            "date_span": "# 2022-08-05 - 2022-09-04"
         },
         {
             "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
@@ -37,5 +41,6 @@
         {
             "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
         }
-    ]
+    ],
+    "host2ip": {}
 }
