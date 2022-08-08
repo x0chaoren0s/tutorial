@@ -17,5 +17,8 @@ docker run -p 7605:7605 -p 7606:7606 --name glider -d -v C:\Users\60490\Desktop\
 # glider_gmsr
 docker run -p 7608:7608 -p 7609:7609 --name glider_gmsr -d -v C:\Users\60490\Desktop\tutorial\momomo2:/momomo2 nadoo/glider -config /momomo2/glider_gmsr.conf
 
+# glider_3060
+docker run -p 7610:7610 -p 7611:7611 --name glider_3060 -d -v C:\Users\60490\Desktop\tutorial\momomo2:/momomo2 nadoo/glider -config /momomo2/glider_3060.conf 
+
 # glider_gmsr_3060
-docker run -p 7610:7610 -p 7611:7611 --name glider_gmsr_3060 -d -v C:\Users\60490\Desktop\tutorial\momomo2:/momomo2 nadoo/glider -config /momomo2/glider_gmsr_3060.conf
+docker run -p 7612:7612 -p 7613:7613 --name glider_gmsr_3060 -d -v C:\Users\60490\Desktop\tutorial\momomo2:/momomo2 nadoo/glider -config /momomo2/glider_gmsr_3060.conf
