@@ -76,3 +76,6 @@ class ReCaptcha_v2_Solver:
         
     def __call__(self, websiteURL, websiteKey) -> str:
         return self.solve(websiteURL, websiteKey)
+
+if __name__ == '__main__':
+    print(ReCaptcha_v2_Solver().solve('https://vpnhack.com/v2ray/canada/ca1', '6LczFssUAAAAAFEgmWV11U6DiUKKCwoxUxqf6Hse'))
