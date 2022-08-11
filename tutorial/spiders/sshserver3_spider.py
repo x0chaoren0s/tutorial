@@ -72,8 +72,8 @@ class SSHServers3Spider(scrapy.Spider):
                     self.parse_server_before_fillingForm, 
                     headers={"referer":response.url},
                     meta = {
-                        'request_interval_secs': self.fillingForm_interval_secs,
-                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].show()
+                        'request_interval_secs': self.fillingForm_interval_secs if  GlobalCounter_arr[self.CRAWLED_IDX].show()>0 else 0,
+                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].count()
                     }  # meta 数据用于给 DeferringDownloaderMiddleware 传参
                 )
             else: # available==0

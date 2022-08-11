@@ -1,26 +1,33 @@
 # https://yescaptcha.atlassian.net/wiki/spaces/YESCAPTCHA/pages/4587548/Python+DEMO+requests+requests+demo.py
 
-import time, requests
+import time, requests, scrapy
 
 
-class ReCaptcha_v2_Solver:
-    def __init__(
-        self,
-        clientKey = "ddd1cf72d9955a0e8ca7d05597fea5eb1dce33de5331", # clientKey：在个人中心获取
-        sleep_sec = 3, # 循环请求识别结果，sleep_sec 秒请求一次
-        max_sec = 120  # 最多等待 max_sec 秒
-    ) -> None:
-        self.clientKey = clientKey
-        self.sleep_sec = sleep_sec
-        self.max_sec = max_sec
-        self.task_type = "NoCaptchaTaskProxyless"
+class UnfinishSpider(scrapy.Spider):
+    name = "UnfinishSpider"
+
+    clientKey = "ddd1cf72d9955a0e8ca7d05597fea5eb1dce33de5331", # clientKey：在个人中心获取
+    sleep_sec = 3, # 循环请求识别结果，sleep_sec 秒请求一次
+    max_sec = 120  # 最多等待 max_sec 秒
+    task_type = "NoCaptchaTaskProxyless"
+
+    def start_requests(self):
+        pass
+
+    def parse(self, response):
+        pass
     
-    def _create_task(self, websiteURL, websiteKey) -> str:
+    def unfinished_create_task(self, response, websiteURL, websiteKey):
         """ 
-        第一步，创建验证码任务 
-        :param 
+        第一步，创建验证码任务   把下面的代码插入到爬虫体中
+        :websiteURL 和 websiteURL 需要现场提取
         :return taskId : string 创建成功的任务ID
         """
+        # 可能是这样的，也可能要根据实际情况现场改
+        websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
+        websiteURL = response.url
+
+        # 下面是调用 yesCaptcha 接口，应该不用改
         url = "https://api.yescaptcha.com/createTask"
         data = {
             "clientKey": self.clientKey,
@@ -30,17 +37,7 @@ class ReCaptcha_v2_Solver:
                 "type": self.task_type
             }
         }
-        try:
-            # 发送JSON格式的数据
-            # result = requests.post(url, json=data, verify=False).json()
-            result = requests.post(url, json=data).json()
-            taskId = result.get('taskId')
-            if taskId is not None:
-                return taskId
-            print(result)
-            
-        except Exception as e:
-            print(e)
+        yield scrapy.FormRequest(url, formdata=data)
 
 
     def solve(self, websiteURL, websiteKey) -> str:
@@ -76,6 +73,3 @@ class ReCaptcha_v2_Solver:
         
     def __call__(self, websiteURL, websiteKey) -> str:
         return self.solve(websiteURL, websiteKey)
-
-if __name__ == '__main__':
-    print(ReCaptcha_v2_Solver().solve('https://vpnhack.com/v2ray/canada/ca1', '6LczFssUAAAAAFEgmWV11U6DiUKKCwoxUxqf6Hse'))
