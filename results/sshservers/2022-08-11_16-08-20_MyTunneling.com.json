@@ -1,0 +1,46 @@
+{
+    "provider_host": "MyTunneling.com",
+    "list_url": "https://www.mytunneling.com/ssh-server-30",
+    "create_time": "2022-08-11_16-08-20",
+    "configs": [
+        {
+            "region": "United States",
+            "username": "tunvpn.com-VwXRZthsp",
+            "password": "Occ2s",
+            "host": "m.us2.ssh.ipmy.pw",
+            "date_created": "2022-08-11",
+            "date_expired": "2022-09-10",
+            "glider_config": "forward=ssh://tunvpn.com-VwXRZthsp:Occ2s@m.us2.ssh.ipmy.pw:22               # United States",
+            "date_span": "# 2022-08-11 - 2022-09-10"
+        },
+        {
+            "region": "United States",
+            "username": "tunvpn.com-HKdAcaLwV36E",
+            "password": "eXXmSQmO",
+            "host": "m.us1.ssh.ipmy.pw",
+            "date_created": "2022-08-11",
+            "date_expired": "2022-09-10",
+            "glider_config": "forward=ssh://tunvpn.com-HKdAcaLwV36E:eXXmSQmO@m.us1.ssh.ipmy.pw:22         # United States",
+            "date_span": "# 2022-08-11 - 2022-09-10"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        },
+        {
+            "error_info": "Oops...,You already created account today,Please come back tomorrow to create new account again !"
+        }
+    ],
+    "host2ip": {}
+}

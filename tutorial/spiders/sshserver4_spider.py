@@ -1,5 +1,5 @@
 import scrapy, time, os, platform
-from utils.common_tools import getRandStr, GlobalCounter
+from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem, Host2IpItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
@@ -7,6 +7,9 @@ from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 class SSHServers4Spider(scrapy.Spider):
     name = "sshservers4"
     base_url = "https://www.vpnjantit.com"
+    CRAWLED_IDX = 0
+    OMMITED_IDX = 1
+    fillingForm_interval_secs = 60*1+2 # 该网站要求 1 min 后才能创建下一个新用户
     
     custom_settings = {
         # "AUTOTHROTTLE_ENABLED" : True,
@@ -17,9 +20,9 @@ class SSHServers4Spider(scrapy.Spider):
         },
         'DOWNLOADER_MIDDLEWARES' : {
             'tutorial.middlewares.TutorialDownloaderMiddleware': 543,
-            # 'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
+            'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
         },
-        # 'CONCURRENT_REQUESTS' : 1 # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
+        'CONCURRENT_REQUESTS' : 1 # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
     }
 
     def start_requests(self):
@@ -52,10 +55,15 @@ class SSHServers4Spider(scrapy.Spider):
 
         for i,available in enumerate(server_availables):
             if available:
+                print(f'-----------available: {server_hosts[i]}')
                 yield scrapy.Request(
                     server_urls[i], 
                     self.parse_server_before_fillingForm, 
-                    headers={"referer":response.url}
+                    headers={"referer":response.url},
+                    meta = {
+                        'request_interval_secs': self.fillingForm_interval_secs,
+                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].show()
+                    }  # meta 数据用于给 DeferringDownloaderMiddleware 传参
                 )
                 yield scrapy.Request(
                     server_showIP_urls[i], 
