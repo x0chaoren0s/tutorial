@@ -10,6 +10,7 @@ class SSHServers4Spider(scrapy.Spider):
     CRAWLED_IDX = 0
     OMMITED_IDX = 1
     fillingForm_interval_secs = 60*1+2 # 该网站要求 1 min 后才能创建下一个新用户
+    # fillingForm_interval_secs = 0 # 该网站要求 1 min 后才能创建下一个新用户
     
     custom_settings = {
         # "AUTOTHROTTLE_ENABLED" : True,
@@ -90,10 +91,12 @@ class SSHServers4Spider(scrapy.Spider):
         ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
+        host = response.xpath('//h5[4]/text()').get().strip()   # br2.vpnjantit.com
+        host_area = host.split('.')[0]  # br2
         return scrapy.FormRequest.from_response(
             response,
             formdata={
-                'user': getRandStr(12),
+                'user': getRandStr(12-1-len(host_area))+f'0{host_area}',
                 'pass': getRandStr(12),
                 'g-recaptcha-response': recaptcha_res
             },
@@ -119,6 +122,15 @@ class SSHServers4Spider(scrapy.Spider):
                 'max_logins'      : success_info[4].strip()[0]
             })
         except:
-            with open(f'{GlobalCounter.count()}.html', 'wb') as f:
-            # with open(f'{time.strftime("%Y-%m-%d_%H:%M:%S",time.localtime())}.html', 'wb') as f:
-                f.write(response.body)
+            try:
+                server_info = response.xpath('//h5/text()').getall()
+                fail_info = response.xpath('//h4//text()').get()
+                yield SshServerConfigItem({
+                        'region'          : server_info[0].strip(),
+                        'host'            : server_info[3].strip(),
+                        'error_info'      : fail_info.strip()
+                    })
+            except:
+                with open(f'{GlobalCounter.count()}.html', 'wb') as f:
+                # with open(f'{time.strftime("%Y-%m-%d_%H:%M:%S",time.localtime())}.html', 'wb') as f:
+                    f.write(response.body)
