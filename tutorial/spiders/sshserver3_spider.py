@@ -92,8 +92,8 @@ class SSHServers3Spider(scrapy.Spider):
             response,
             formdata={
                 'id': response.url.split('=')[-1],
-                'username': getRandStr(),
-                'password': getRandStr(),
+                'username': getRandStr(12),
+                'password': getRandStr(12),
                 'g-recaptcha-response': recaptcha_res,
                 'createAcc': 'Create+Now'
             },
@@ -119,5 +119,12 @@ class SSHServers3Spider(scrapy.Spider):
                 'max_logins'      : response.xpath('//div[@class="alert alert-danger text-center"]/text()').get().split()[3]
             })
         except:
-            with open(f'{GlobalCounter.count()}.html', 'wb') as f:
-                f.write(response.body)
+            try:
+                yield SshServerConfigItem({
+                    'region'          : response.xpath('//h1/text()').get().split()[-1],
+                    'host'            : response.xpath('//table[@class="table table-hover"]/tbody/tr[1]/td/text()').get().strip(),
+                    'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
+                })
+            except:
+                with open(f'{GlobalCounter.count()}.html', 'wb') as f:
+                    f.write(response.body)
