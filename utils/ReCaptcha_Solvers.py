@@ -14,6 +14,7 @@ class ReCaptcha_v2_Solver:
         self.sleep_sec = sleep_sec
         self.max_sec = max_sec
         self.task_type = "NoCaptchaTaskProxyless"
+        self._debug = False
     
     def _create_task(self, websiteURL, websiteKey) -> str:
         """ 
@@ -37,7 +38,8 @@ class ReCaptcha_v2_Solver:
             taskId = result.get('taskId')
             if taskId is not None:
                 return taskId
-            print(result)
+            if self._debug:
+                print(result)
             
         except Exception as e:
             print(e)
@@ -67,7 +69,8 @@ class ReCaptcha_v2_Solver:
                     gRecaptchaResponse = solution.get('gRecaptchaResponse')
                     if gRecaptchaResponse:
                         return gRecaptchaResponse
-                print(result)
+                if self._debug:
+                    print(result)
             except Exception as e:
                 print(e)
 
