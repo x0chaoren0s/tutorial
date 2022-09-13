@@ -1,3 +1,11 @@
 # 使用docker镜像
 # https://hub.docker.com/r/easypi/scrapyd
+# 该镜像无法使用 scrapy shell
 docker pull easypi/scrapyd
+
+# 完整安装
+# https://docs.scrapy.org/en/latest/intro/install.html
+conda create -n spider python=3.7
+conda activate spider
+# Windows
+conda install -c conda-forge scrapy
