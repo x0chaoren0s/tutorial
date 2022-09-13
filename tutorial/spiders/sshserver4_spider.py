@@ -62,8 +62,8 @@ class SSHServers4Spider(scrapy.Spider):
                     self.parse_server_before_fillingForm, 
                     headers={"referer":response.url},
                     meta = {
-                        'request_interval_secs': self.fillingForm_interval_secs,
-                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].show()
+                        'request_interval_secs': self.fillingForm_interval_secs if  GlobalCounter_arr[self.CRAWLED_IDX].show()>0 else 0,
+                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].count()
                     }  # meta 数据用于给 DeferringDownloaderMiddleware 传参
                 )
                 yield scrapy.Request(
@@ -81,8 +81,8 @@ class SSHServers4Spider(scrapy.Spider):
     def parse_host2ip(self, response):
         _ = response.xpath('//font[@color="green"]/text()').getall() # ['Name host: ae1.vpnjantit.com', '\nIP address: \n147.78.0.131 ']
         host = _[0].split(' ')[2] # 'ae1.vpnjantit.com'
-        ip = _[1].split(' ')[2].strip() # '147.78.0.131'
-        return Host2IpItem({
+        ip = _[1].split()[-1] # '147.78.0.131'
+        yield Host2IpItem({
             'host'  : host,
             'ip'    : ip
         })
@@ -93,7 +93,7 @@ class SSHServers4Spider(scrapy.Spider):
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
         host = response.xpath('//h5[4]/text()').get().strip()   # br2.vpnjantit.com
         host_area = host.split('.')[0]  # br2
-        return scrapy.FormRequest.from_response(
+        yield scrapy.FormRequest.from_response(
             response,
             formdata={
                 'user': getRandStr(12-1-len(host_area))+f'0{host_area}',
@@ -108,11 +108,9 @@ class SSHServers4Spider(scrapy.Spider):
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
-        def normalize_date(datestr): # 如把 ' 17-07-2022' 标准化成 '2022-07-17'
-            return time.strftime("%Y-%m-%d",time.strptime(datestr," %d-%m-%Y"))
         try:
             success_info = response.xpath('//h5/text()').getall()
-            return SshServerConfigItem({
+            yield SshServerConfigItem({
                 'region'          : success_info[3].strip(),
                 'username'        : success_info[0].strip(),
                 'password'        : success_info[1].strip(),
@@ -131,6 +129,15 @@ class SSHServers4Spider(scrapy.Spider):
                         'error_info'      : fail_info.strip()
                     })
             except:
-                with open(f'{GlobalCounter.count()}.html', 'wb') as f:
-                # with open(f'{time.strftime("%Y-%m-%d_%H:%M:%S",time.localtime())}.html', 'wb') as f:
-                    f.write(response.body)
+                try:
+                    server_info = response.xpath('//h5/text()').getall()
+                    fail_info = response.xpath('//font[@color="red"]/text()').get().strip()
+                    yield SshServerConfigItem({
+                            'region'          : server_info[0].strip(),
+                            'host'            : server_info[3].strip(),
+                            'error_info'      : fail_info.strip()
+                        })
+                except:
+                    with open(f'{GlobalCounter.count()}.html', 'wb') as f:
+                    # with open(f'{time.strftime("%Y-%m-%d_%H:%M:%S",time.localtime())}.html', 'wb') as f:
+                        f.write(response.body)
