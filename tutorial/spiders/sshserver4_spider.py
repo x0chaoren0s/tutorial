@@ -23,7 +23,8 @@ class SSHServers4Spider(scrapy.Spider):
             'tutorial.middlewares.TutorialDownloaderMiddleware': 543,
             'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
         },
-        'CONCURRENT_REQUESTS' : 1 # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
+        'CONCURRENT_REQUESTS' : 1, # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
+        'ROBOTSTXT_OBEY' : False
     }
 
     def start_requests(self):
