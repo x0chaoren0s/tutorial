@@ -22,7 +22,8 @@ class ReCaptcha_v2_Solver:
         :param 
         :return taskId : string 创建成功的任务ID
         """
-        url = "https://api.yescaptcha.com/createTask"
+        # url = "https://api.yescaptcha.com/createTask"
+        url = "https://china.yescaptcha.com/createTask"
         data = {
             "clientKey": self.clientKey,
             "task": {
@@ -57,7 +58,8 @@ class ReCaptcha_v2_Solver:
         times = 0
         while times < self.max_sec:
             try:
-                url = f"https://api.yescaptcha.com/getTaskResult"
+                # url = f"https://api.yescaptcha.com/getTaskResult"
+                url = f"https://china.yescaptcha.com/getTaskResult"
                 data = {
                     "clientKey": self.clientKey,
                     "taskId": taskID

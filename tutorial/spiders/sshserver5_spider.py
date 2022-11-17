@@ -31,9 +31,9 @@ class SSHServers5Spider(scrapy.Spider):
         爬取服务器组列表页面，该列表有6项可选：3days,7days,30days,openvpn,ss,v2ray。此处选 7days（30days抢不到服务器）
         并调用 parse_server_list 爬取服务器列表页面信息。该列表不是总列表，一页最多列出2个服务器，需要点下一页
         '''
-        server_group_heads_urls = response.xpath('//div[@class="col-lg-4 col-md"]//a/@href').getall()
+        server_group_heads_urls = response.xpath('//div[@class="col-lg-4 col-md"]//a/@href').getall() # ['/?q=ssh-servers', '/?q=ssh-servers&filter=extra', '/?q=ssh-servers&filter=one-month', '/?q=vpn-servers', '/?q=shadowsocks', '/?q=v2ray']
         # print(server_group_heads_urls)
-        init_server_list_url = self.base_url + server_group_heads_urls[1]
+        init_server_list_url = self.base_url + server_group_heads_urls[1] # 'https://serverssh.net/?q=ssh-servers&filter=extra'
         yield SshServerProviderHostItem({
             'provider_host': 'serverssh.net',
             'list_url'     : init_server_list_url
@@ -57,7 +57,7 @@ class SSHServers5Spider(scrapy.Spider):
         server_availables = [r=='Remaining: ' for r in server_remainings] # [False, True]
         server_regions = [s.xpath('//li[@class="list-group-item py-2"]/text()').getall()[0]
             for s in server_seletors] # ['Location: Singapore', 'Location: Singapore']
-        server_regions = [r.split('Location: ')[1] for r in server_regions] # ['Singapore', 'Singapore']
+        server_regions = [r.split('Location: ')[1].strip() for r in server_regions] # ['Singapore', 'Singapore']
         server_hosts = [s.xpath('//li[@class="list-group-item py-2"][1]/span/text()').get().strip()
             for s in server_seletors] # ['SGX1', 'SGX2']
         server_hosts = [h.lower()+'.serverssh.net' for h in server_hosts] # ['sgx1.serverssh.net', 'sgx2.serverssh.net']
@@ -96,12 +96,12 @@ class SSHServers5Spider(scrapy.Spider):
         ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
-        return scrapy.FormRequest.from_response(
+        yield scrapy.FormRequest.from_response(
             response,
             formdata={
                 'id': response.url.split('=')[-1],
-                'username': getRandStr(),
-                'password': getRandStr(),
+                'username': getRandStr(12),
+                'password': getRandStr(12),
                 'g-recaptcha-response': recaptcha_res,
                 'createAcc': ''
             },
@@ -116,17 +116,19 @@ class SSHServers5Spider(scrapy.Spider):
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
-        try:
-            success_info = response.xpath('//li[@class="list-group-item py-3"]/font/b/text()').getall()
-            return SshServerConfigItem({
-                'region'          : response.meta['region'],
-                'username'        : success_info[1].split(':')[-1].strip(),
-                'password'        : success_info[2].split(':')[-1].strip(),
-                'host'            : success_info[0].split(':')[-1].strip(),
-                'date_created'    : normalized_local_date(), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
-                'date_expired'    : normalize_date(success_info[3].split(':')[-1].strip(), '%d-%m-%Y'), # 该网站日期格式 04-08-2022
-                'max_logins'      : '1' # 该网站 3days 最大设备数为 2, 7days 最大设备数为 1
-            })
-        except:
-            with open(f'{GlobalCounter.count()}.html', 'wb') as f:
-                f.write(response.body)
+        # try:
+        success_info = response.xpath('//li[@class="list-group-item py-3"]/font/b/text()').getall()
+        print(success_info)
+        yield SshServerConfigItem({
+            'region'          : response.meta['region'],
+            'username'        : success_info[1].split(':')[-1].strip(),
+            'password'        : success_info[2].split(':')[-1].strip(),
+            'host'            : success_info[0].split(':')[-1].strip(),
+            'date_created'    : normalized_local_date(), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
+            'date_expired'    : normalize_date(success_info[3].split(':')[-1].strip(), '%d-%m-%Y'), # 该网站日期格式 04-08-2022
+            'max_logins'      : '1' # 该网站 3days 最大设备数为 2, 7days 最大设备数为 1
+        })
+        # except Exception as e:
+        #     print(e)
+        #     with open(f'{GlobalCounter.count()}.html', 'wb') as f:
+        #         f.write(response.body)

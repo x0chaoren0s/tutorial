@@ -48,7 +48,9 @@ class SshServerWritingJsonPipeline:
             self.content_dict['list_url']      = item['list_url']
         elif isinstance(item, SshServerConfigItem):
             if 'error_info' not in item:
-                item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:22"
+                if 'port' not in item:
+                    item['port'] = '22'
+                item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:{item['port']}"
                 item['date_span'] = f"# {item['date_created']} - {item['date_expired']}"
             self.content_dict['configs'].append(dict(item))
         elif isinstance(item, Host2IpItem):
@@ -80,5 +82,5 @@ class SshServerWritingJsonPipeline:
                 print(f"host:{config['host']} ip:{config['ip']}")
                 print(f"raw config: {config['glider_config']}")
                 # config['glider_config'] = f"forward=ssh://{config['username']}:{config['password']}@{config['host']}:22"
-                config['glider_config'] = f"forward=ssh://{config['username']}:{config['password']}@{config['ip']}:22"
+                config['glider_config'] = f"forward=ssh://{config['username']}:{config['password']}@{config['ip']}:{config['port']}"
                 print(f"new config: {config['glider_config']}")

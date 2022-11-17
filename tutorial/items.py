@@ -26,6 +26,7 @@ class SshServerConfigItem(scrapy.Item):
     host            = scrapy.Field()
     host_cloudflare = scrapy.Field()
     ip              = scrapy.Field() # 有的网站其 host 不能用，而要使用 ip，如 www.vpnjantit.com
+    port            = scrapy.Field() # 有的网站不是 22，如 https://sshstores.net/
     date_created    = scrapy.Field()
     date_expired    = scrapy.Field()
     max_logins      = scrapy.Field()

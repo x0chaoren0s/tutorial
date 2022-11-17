@@ -3,6 +3,8 @@ from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
+from scrapy import Selector
+
 # scrapy crawl sshservers3
 class SSHServers3Spider(scrapy.Spider):
     name = "sshservers3"
@@ -35,10 +37,11 @@ class SSHServers3Spider(scrapy.Spider):
 
     def parse(self, response):
         '''
-        爬取服务器组列表页面，该列表有4项可选：3days,7days,vip,ss。此处选 7days
+        爬取服务器组列表页面，该列表有4项可选：3days,7days,vip,vmess,vless,gfw,go,ss,sstp,wireguard,openvpn。此处选 7days
         并调用 parse_server_list 爬取服务器列表页面信息。该列表不是总列表，一页最多列出2个服务器，需要点下一页
         '''
-        server_group_heads_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall()
+        # server_group_heads_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall()
+        server_group_heads_urls = response.xpath('//a[@class="btn btn-block btn-lg btn-white"]/@href').getall()
         # print(server_group_heads_urls)
         init_server_list_url = self.base_url+server_group_heads_urls[1]
         yield SshServerProviderHostItem({
@@ -54,19 +57,36 @@ class SSHServers3Spider(scrapy.Spider):
         ②爬取下一页服务器列表页面的url
           调用 parse_server_list 继续爬取下一页
         '''
-        server_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall() # ['/?do=create-account&filter=92', '/?do=create-account&filter=93']
+        server_htmls = response.xpath('//div[@class="col-lg-4 col-md"]').getall()
+        server_selectors = [Selector(text=h) for h in server_htmls]
+        # server_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall() # ['/?do=create-account&filter=92', '/?do=create-account&filter=93']
+        # server_urls = response.xpath('//li[@class="list-group-item"]/a/@href').getall() # ['/?do=create-account&filter=92', '/?do=create-account&filter=93']
+        server_urls = [s.xpath('//li[@class="list-group-item"]/a/@href').get() for s in server_selectors]  # ['/?do=create-account&filter=92', '/?do=create-account&filter=93']
         server_urls = [self.base_url+url[1:] for url in server_urls] # ['https://www.jagoanssh.com/?do=create-account&filter=92', 'https://www.jagoanssh.com/?do=create-account&filter=93']
-        server_availables = response.xpath('//span[@class="label label-success"]/text()').getall() # ['0 Available', '0 Available']
-        server_availables = [int(s.split()[0]) for s in server_availables] # [0, 0]
-        server_regions = response.xpath('//div[@class="probootstrap-pricing popular"]/h4/text()').getall() # ['SINGAPORE ', 'SINGAPORE ']
-        server_hosts = response.xpath('//div[@class="probootstrap-pricing popular"]/ul').getall()
-        server_hosts = [scrapy.Selector(text=html).xpath('//li/text()').get() for html in server_hosts] # ['sg1-7.ipservers.xyz', 'sg2-7.ipservers.xyz']
-        next_server_list_url = self.base_url+response.xpath('//a[@aria-label="Next"]/@href').get()
+        # server_availables = response.xpath('//span[@class="label label-success"]/text()').getall() # ['0 Available', '0 Available']
+        # server_availables = [int(s.split()[0]) for s in server_availables] # [0, 0]
+        server_availables = [s.xpath('//li[@class="list-group-item py-2"][5]/text()').get() for s in server_selectors] # ['Remaining: 0 From 20', 'Remaining: ']
+        for i in range(len(server_availables)):
+            if server_availables[i]!='Remaining: ':
+                server_availables[i] = 0    # 0
+            else:
+                server_availables[i] = int(server_selectors[i].xpath('//span[@class="label label-success"]/text()').get().split()[0])   # 20
+        # server_regions = response.xpath('//div[@class="probootstrap-pricing popular"]/h4/text()').getall() # ['SINGAPORE ', 'SINGAPORE ']
+        server_regions = [s.xpath('//li[@class="list-group-item py-2"][2]/text()').get() for s in server_selectors] # ['Location: Singapore ', 'Location: Singapore ']
+        server_regions = [r[10:].strip() for r in server_regions] # ['Singapore', 'Singapore']
+        # server_hosts = response.xpath('//div[@class="probootstrap-pricing popular"]/ul').getall()
+        # server_hosts = [scrapy.Selector(text=html).xpath('//li/text()').get() for html in server_hosts] # ['sg1-7.ipservers.xyz', 'sg2-7.ipservers.xyz']
+        next_server_list_url = self.base_url+response.xpath('//a[@aria-label="Next"]/@href').get() # 'https://www.jagoanssh.com/?do=v2ray&filter=&page=5'
 
         if len(server_urls)>0:
             yield scrapy.Request(next_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
         for i,available in enumerate(server_availables):
+            print('++++++++++++ server info ++++++++++++++')
+            print(f'region   : {server_regions[i]}')
+            # print(f'host     : {server_hosts[i]}')
+            print(f'available: {available}')
+            print('+++++++++++++++++++++++++++++++++++++++')
             if available>0:
                 yield scrapy.Request(
                     server_urls[i], 
@@ -80,7 +100,7 @@ class SSHServers3Spider(scrapy.Spider):
             else: # available==0
                 yield SshServerConfigItem({
                     'region'          : server_regions[i],
-                    'host'            : server_hosts[i],
+                    # 'host'            : server_hosts[i],
                     'error_info'      : 'no available'
                 })
 
@@ -89,19 +109,21 @@ class SSHServers3Spider(scrapy.Spider):
         ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
-        return scrapy.FormRequest.from_response(
+        print('----已获取recaptcha_res----')
+        yield scrapy.FormRequest.from_response(
             response,
             formdata={
                 'id': response.url.split('=')[-1],
                 'username': getRandStr(12),
                 'password': getRandStr(12),
                 'g-recaptcha-response': recaptcha_res,
-                'createAcc': 'Create+Now'
+                'createAcc': ''
             },
             callback=self.parse_server_after_fillingForm
         )
         
     def parse_server_after_fillingForm(self, response):
+        print('----已进入parse_server_after_fillingForm----')
         ''' 爬取注册账户后服务器的配置信息 '''
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
@@ -109,17 +131,19 @@ class SSHServers3Spider(scrapy.Spider):
         def normalize_date(datestr): # 如把 ' 17-07-2022' 标准化成 '2022-07-17'
             return time.strftime("%Y-%m-%d",time.strptime(datestr," %d-%m-%Y"))
         try:
-            success_info = response.xpath('//div[@class="alert alert-success alert-dismissable"]/text()').getall()
+            # success_info = response.xpath('//div[@class="alert alert-success alert-dismissable"]/text()').getall()
             yield SshServerConfigItem({
-                'region'          : response.xpath('//h1/text()').get().split()[-1],
-                'username'        : success_info[2].split(':')[-1][1:],
-                'password'        : success_info[3].split(':')[-1][1:],
-                'host'            : success_info[1].split(':')[-1][1:],
+                'region'          : response.xpath('//h1/text()').get()[19:].strip(),
+                'username'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[2]/span/text()').get().split(': ')[-1],
+                'password'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[3]/span/text()').get().split(': ')[-1],
+                'host'            : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[1]/span/text()').get().split(': ')[-1],
                 'date_created'    : time.strftime("%Y-%m-%d",time.localtime()), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
-                'date_expired'    : normalize_date(success_info[4].split(':')[-1]),
-                'max_logins'      : response.xpath('//div[@class="alert alert-danger text-center"]/text()').get().split()[3]
+                'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[4]/span/text()').get().split(': ')[-1],),
+                # 'max_logins'      : response.xpath('//div[@class="alert alert-danger text-center"]/text()').get().split()[3]
+                'max_logins'      : '1'
             })
-        except:
+        except Exception as e:
+            print(e)
             try:
                 yield SshServerConfigItem({
                     'region'          : response.xpath('//h1/text()').get().split()[-1],
