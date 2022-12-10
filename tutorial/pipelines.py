@@ -38,6 +38,7 @@ class SshServerWritingJsonPipeline:
         self.create_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
         self.filename = f"{self.create_time}_{self.content_dict['provider_host']}.json"
         self.content_dict['create_time'] = self.create_time
+        os.makedirs(self.outdir, exist_ok=True)
         with open(os.path.join(self.outdir,self.filename), 'w') as f:
             json.dump(self.content_dict, f, indent=4, ensure_ascii=True)
 
