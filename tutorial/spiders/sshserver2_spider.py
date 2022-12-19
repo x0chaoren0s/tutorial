@@ -67,7 +67,8 @@ class SSHServers2Spider(scrapy.Spider):
             formdata={
                 'username': getRandStr(12+6),
                 'password': getRandStr(12),
-                'g-recaptcha-response': recaptcha_res
+                'g-recaptcha-response': recaptcha_res,
+                'submit': ''
             },
             callback=self.parse_server_after_fillingForm
         )
