@@ -31,7 +31,7 @@ class SSHServers2Spider(scrapy.Spider):
             'list_url'     : response.url
         })
 
-        region_urls = response.xpath('//a[@class="btn btn-primary d-block"]/@href').getall()
+        region_urls = response.xpath('//a[@class="btn btn-primary d-block rounded-pill"]/@href').getall()
         yield from response.follow_all(region_urls, self.parse_region)
 
     def parse_region(self, response):
