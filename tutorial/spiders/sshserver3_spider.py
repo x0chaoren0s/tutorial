@@ -143,13 +143,13 @@ class SSHServers3Spider(scrapy.Spider):
                 'max_logins'      : '1'
             })
         except Exception as e:
-            print(e)
             try:
                 yield SshServerConfigItem({
                     'region'          : response.xpath('//h1/text()').get().split()[-1],
                     'host'            : response.xpath('//table[@class="table table-hover"]/tbody/tr[1]/td/text()').get().strip(),
                     'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
                 })
-            except:
-                with open(f'{GlobalCounter.count()}.html', 'wb') as f:
+            except Exception as e:
+                print(e)
+                with open(f'server3_{GlobalCounter.count()}.html', 'wb') as f:
                     f.write(response.body)

@@ -1,5 +1,5 @@
 import scrapy, time
-from utils.common_tools import getRandStr
+from utils.common_tools import getRandStr, GlobalCounter
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
@@ -77,12 +77,24 @@ class SSHServers2Spider(scrapy.Spider):
         ''' 爬取注册账户后服务器的配置信息 '''
         def normalize_date(datestr): # 如把 6 Jun 2022 标准化成 2022-06-06
             return time.strftime("%Y-%m-%d",time.strptime(datestr,"%d %b %Y"))
-        return SshServerConfigItem({
-            'region'          : response.url.split('/')[-2],
-            'username'        : response.xpath('//div[@class="alert alert-success text-center"]//li[3]/b/text()').get(),
-            'password'        : response.xpath('//div[@class="alert alert-success text-center"]//li[4]/b/text()').get(),
-            'host'            : response.xpath('//div[@class="alert alert-success text-center"]//li[1]/b/text()').get(),
-            'host_cloudflare' : response.xpath('//div[@class="alert alert-success text-center"]//li[2]/b/text()').get(),
-            'date_created'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[5]/b/text()').get()),
-            'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[6]/b/text()').get())
-        })
+        try:
+            return SshServerConfigItem({
+                'region'          : response.url.split('/')[-2],
+                'username'        : response.xpath('//div[@class="alert alert-success text-center"]//li[3]/b/text()').get(),
+                'password'        : response.xpath('//div[@class="alert alert-success text-center"]//li[4]/b/text()').get(),
+                'host'            : response.xpath('//div[@class="alert alert-success text-center"]//li[1]/b/text()').get(),
+                'host_cloudflare' : response.xpath('//div[@class="alert alert-success text-center"]//li[2]/b/text()').get(),
+                'date_created'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[5]/b/text()').get()),
+                'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success text-center"]//li[6]/b/text()').get())
+            })
+        except Exception as e:
+            try:
+                return SshServerConfigItem({
+                    'region'          : response.url.split('/')[-2],
+                    'host'            : response.xpath('//div[@class="col-12 p-3"]/h5/text()').get().strip(),
+                    'error_info'      : response.xpath('//div[@class="alert alert-warning"]/text()[2]').get().strip()
+                })
+            except Exception as e:
+                print(e)
+                with open(f'server2_{GlobalCounter.count()}.html', 'wb') as f:
+                    f.write(response.body)

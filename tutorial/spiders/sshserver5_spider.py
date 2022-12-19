@@ -1,5 +1,5 @@
 import scrapy, time, os, platform
-from utils.common_tools import getRandStr, GlobalCounter, normalized_local_date, normalize_date
+from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr, normalized_local_date, normalize_date
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
@@ -7,7 +7,11 @@ from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 class SSHServers5Spider(scrapy.Spider):
     name = "sshservers5"
     base_url = "https://serverssh.net"
-    # fillingForm_interval_secs = 60*5+2 # 该网站要求 5 min 后才能创建下一个新用户
+    # crawled_server_cnt = MyCounter() # 经实验，不同线程之间不能共享这两个变量，因此考虑使用全局变量 GlobalCounter_arr
+    # ommited_server_cnt = MyCounter()
+    CRAWLED_IDX = 0 # 这两个是上面两个变量对应转换到 GlobalCounter_arr 中的索引
+    OMMITED_IDX = 1
+    fillingForm_interval_secs = 60*5+2 # 该网站要求 5 min 后才能创建下一个新用户
     
     custom_settings = {
         # "AUTOTHROTTLE_ENABLED" : True,
@@ -18,7 +22,7 @@ class SSHServers5Spider(scrapy.Spider):
         },
         'DOWNLOADER_MIDDLEWARES' : {
             'tutorial.middlewares.TutorialDownloaderMiddleware': 543,
-            # 'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
+            'tutorial.middlewares.DeferringDownloaderMiddleware': 544 # 用于使特定的 request 在特定的时间延迟后再发送
         },
         'CONCURRENT_REQUESTS' : 1 # default 16 最大并发数，该网站要求每次创建用户前后有固定间隔，因此并发数设为1，间隔时间就不用累加设置
     }
@@ -80,8 +84,8 @@ class SSHServers5Spider(scrapy.Spider):
                     headers={"referer":response.url},
                     meta = {
                         'region': server_regions[i], # 该网站注册成功页面没有服务器的地区信息，因此在这里传参过去
-                        # 'request_interval_secs': self.fillingForm_interval_secs,  # 用于给 DeferringDownloaderMiddleware 传参
-                        # 'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].show() # 用于给 DeferringDownloaderMiddleware 传参
+                        'request_interval_secs': self.fillingForm_interval_secs,  # 用于给 DeferringDownloaderMiddleware 传参
+                        'cnt_crawled': GlobalCounter_arr[self.CRAWLED_IDX].count() # 用于给 DeferringDownloaderMiddleware 传参
                     }  
                 )
             else: # available == False
@@ -116,19 +120,26 @@ class SSHServers5Spider(scrapy.Spider):
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
-        # try:
-        success_info = response.xpath('//li[@class="list-group-item py-3"]/font/b/text()').getall()
-        print(success_info)
-        yield SshServerConfigItem({
-            'region'          : response.meta['region'],
-            'username'        : success_info[1].split(':')[-1].strip(),
-            'password'        : success_info[2].split(':')[-1].strip(),
-            'host'            : success_info[0].split(':')[-1].strip(),
-            'date_created'    : normalized_local_date(), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
-            'date_expired'    : normalize_date(success_info[3].split(':')[-1].strip(), '%d-%m-%Y'), # 该网站日期格式 04-08-2022
-            'max_logins'      : '1' # 该网站 3days 最大设备数为 2, 7days 最大设备数为 1
-        })
-        # except Exception as e:
-        #     print(e)
-        #     with open(f'{GlobalCounter.count()}.html', 'wb') as f:
-        #         f.write(response.body)
+        try:
+            success_info = response.xpath('//li[@class="list-group-item py-3"]/font/b/text()').getall()
+            print(success_info)
+            yield SshServerConfigItem({
+                'region'          : response.meta['region'],
+                'username'        : success_info[1].split(':')[-1].strip(),
+                'password'        : success_info[2].split(':')[-1].strip(),
+                'host'            : success_info[0].split(':')[-1].strip(),
+                'date_created'    : normalized_local_date(), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
+                'date_expired'    : normalize_date(success_info[3].split(':')[-1].strip(), '%d-%m-%Y'), # 该网站日期格式 04-08-2022
+                'max_logins'      : '1' # 该网站 3days 最大设备数为 2, 7days 最大设备数为 1
+            })
+        except Exception as e:
+            try:
+                yield SshServerConfigItem({
+                    'region'          : response.xpath('//meta[@name="description"]/@content').get().split('Free Premium SSH Tunnel 7 Days Servers ')[-1].strip(),
+                    'host'            : response.xpath('//table/tbody/tr[1]/td/text()').get().strip(),
+                    'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
+                })
+            except Exception as e:
+                print(e)
+                with open(f'server5_{GlobalCounter.count()}.html', 'wb') as f:
+                    f.write(response.body)
