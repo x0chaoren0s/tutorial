@@ -17,7 +17,8 @@ def crawl(spider):
     cwd = '.'
     json_path=subprocess.Popen(
         # 'D:/ProgramData/Anaconda3/envs/spider/python.exe -m scrapy crawl sshservers3', 
-        f'python -m scrapy crawl {spider}', 
+        # f'python -m scrapy crawl {spider}', 
+        f'/home/appuser/venv/bin/python -m scrapy crawl {spider}', 
         stdout=subprocess.PIPE, shell=True, text=True, cwd=cwd, 
         # stderr=subprocess.STDOUT
         ).stdout.read().strip()
