@@ -1,11 +1,11 @@
-import scrapy, time, os, platform
+import scrapy, time, os, platform, logging
 from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr
 from ..items import SshServerProviderHostItem, SshServerConfigItem, Host2IpItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
-# scrapy crawl sshservers4
+# scrapy crawl sshserver4
 class SSHServers4Spider(scrapy.Spider):
-    name = "sshservers4"
+    name = "sshserver4"
     base_url = "https://www.vpnjantit.com"
     CRAWLED_IDX = 0
     OMMITED_IDX = 1
@@ -58,7 +58,7 @@ class SSHServers4Spider(scrapy.Spider):
 
         for i,available in enumerate(server_availables):
             if available:
-                print(f'-----------available: {server_hosts[i]}')
+                logging.info(f'-----------available: {server_hosts[i]}')
                 yield scrapy.Request(
                     server_urls[i], 
                     self.parse_server_before_fillingForm, 

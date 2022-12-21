@@ -5,9 +5,11 @@ from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
 from scrapy import Selector
 
-# scrapy crawl sshservers3
+import logging
+
+# scrapy crawl sshserver3
 class SSHServers3Spider(scrapy.Spider):
-    name = "sshservers3"
+    name = "sshserver3"
     base_url = "https://www.jagoanssh.com/"
     # crawled_server_cnt = MyCounter() # 经实验，不同线程之间不能共享这两个变量，因此考虑使用全局变量 GlobalCounter_arr
     # ommited_server_cnt = MyCounter()
@@ -42,7 +44,7 @@ class SSHServers3Spider(scrapy.Spider):
         '''
         # server_group_heads_urls = response.xpath('//a[@class="btn btn-primary"]/@href').getall()
         server_group_heads_urls = response.xpath('//a[@class="btn btn-block btn-lg btn-white"]/@href').getall()
-        # print(server_group_heads_urls)
+        # logging.info(server_group_heads_urls)
         init_server_list_url = self.base_url+server_group_heads_urls[1]
         yield SshServerProviderHostItem({
             'provider_host': 'jagoanssh.com',
@@ -82,11 +84,11 @@ class SSHServers3Spider(scrapy.Spider):
             yield scrapy.Request(next_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
         for i,available in enumerate(server_availables):
-            print('++++++++++++ server info ++++++++++++++')
-            print(f'region   : {server_regions[i]}')
-            # print(f'host     : {server_hosts[i]}')
-            print(f'available: {available}')
-            print('+++++++++++++++++++++++++++++++++++++++')
+            logging.info('++++++++++++ server info ++++++++++++++')
+            logging.info(f'region   : {server_regions[i]}')
+            # logging.info(f'host     : {server_hosts[i]}')
+            logging.info(f'available: {available}')
+            logging.info('+++++++++++++++++++++++++++++++++++++++')
             if available>0:
                 yield scrapy.Request(
                     server_urls[i], 
@@ -109,7 +111,7 @@ class SSHServers3Spider(scrapy.Spider):
         ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
-        print('----已获取recaptcha_res----')
+        logging.info('----已获取recaptcha_res----')
         yield scrapy.FormRequest.from_response(
             response,
             formdata={
@@ -123,7 +125,7 @@ class SSHServers3Spider(scrapy.Spider):
         )
         
     def parse_server_after_fillingForm(self, response):
-        print('----已进入parse_server_after_fillingForm----')
+        logging.info('----已进入parse_server_after_fillingForm----')
         ''' 爬取注册账户后服务器的配置信息 '''
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
@@ -150,6 +152,6 @@ class SSHServers3Spider(scrapy.Spider):
                     'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
                 })
             except Exception as e:
-                print(e)
+                logging.error(e)
                 with open(f'server3_{GlobalCounter.count()}.html', 'wb') as f:
                     f.write(response.body)

@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import os, time, json, platform
+import os, time, json, platform, logging
 from .items import SshServerProviderHostItem, SshServerConfigItem, Host2IpItem
 
 
@@ -27,10 +27,6 @@ class SshServerWritingJsonPipeline:
     }
     
     def close_spider(self, spider):
-        print('=======================================')
-        print('=======================================')
-        print('=======================================')
-        print('=======in close_spider()===============')
         self.replace_host_2_ip()
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
@@ -39,11 +35,13 @@ class SshServerWritingJsonPipeline:
         self.filename = f"{self.create_time}_{self.content_dict['provider_host']}.json"
         self.content_dict['create_time'] = self.create_time
         os.makedirs(self.outdir, exist_ok=True)
-        with open(os.path.join(self.outdir,self.filename), 'w') as f:
+        json_path = os.path.join(self.outdir,self.filename)
+        with open(json_path, 'w') as f:
             json.dump(self.content_dict, f, indent=4, ensure_ascii=True)
+        print(json_path)
 
     def process_item(self, item, spider):
-        print(item)
+        # print(item)
         if isinstance(item, SshServerProviderHostItem):
             self.content_dict['provider_host'] = item['provider_host']
             self.content_dict['list_url']      = item['list_url']
@@ -60,28 +58,11 @@ class SshServerWritingJsonPipeline:
     
     def replace_host_2_ip(self):
         ''' 有的网站其 host 不能用，而要使用 ip，如 www.vpnjantit.com 。该函数对没有 host2ip 信息的 host 不产生作用 '''
-        print('=======================================')
-        print('=======================================')
-        print('=======================================')
-        print('=======in replace_host_2_ip()===============')
-        print('in replace_host_2_ip()')
-        print("self.content_dict['host2ip']:")
-        print(self.content_dict['host2ip'])
-        print("self.content_dict['configs']:")
-        print(self.content_dict['configs'])
         for config in self.content_dict['configs']:
-            print("config:")
-            print(config)
             if 'error_info' in config:
-                print('has error_info')
                 continue
             if 'ip' in config:
-                print('has ip')
                 continue
             if config['host'] in self.content_dict['host2ip']:
                 config['ip'] = self.content_dict['host2ip'][config['host']]
-                print(f"host:{config['host']} ip:{config['ip']}")
-                print(f"raw config: {config['glider_config']}")
-                # config['glider_config'] = f"forward=ssh://{config['username']}:{config['password']}@{config['host']}:22"
                 config['glider_config'] = f"forward=ssh://{config['username']}:{config['password']}@{config['ip']}:{config['port']}"
-                print(f"new config: {config['glider_config']}")

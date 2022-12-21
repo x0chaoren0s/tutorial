@@ -4,9 +4,9 @@ from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
 # test
-# scrapy crawl sshservers6
+# scrapy crawl sshserver6
 class SSHServers6Spider(scrapy.Spider):
-    name = "sshservers6"
+    name = "sshserver6"
     base_url = "https://sshstores.net"
     custom_settings = {
         'DOWNLOAD_DELAY': 3,

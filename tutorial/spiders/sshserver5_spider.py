@@ -1,11 +1,11 @@
-import scrapy, time, os, platform
+import scrapy, time, os, platform, logging
 from utils.common_tools import getRandStr, GlobalCounter, GlobalCounter_arr, normalized_local_date, normalize_date
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
-# scrapy crawl sshservers5
+# scrapy crawl sshserver5
 class SSHServers5Spider(scrapy.Spider):
-    name = "sshservers5"
+    name = "sshserver5"
     base_url = "https://serverssh.net"
     # crawled_server_cnt = MyCounter() # 经实验，不同线程之间不能共享这两个变量，因此考虑使用全局变量 GlobalCounter_arr
     # ommited_server_cnt = MyCounter()
@@ -36,7 +36,7 @@ class SSHServers5Spider(scrapy.Spider):
         并调用 parse_server_list 爬取服务器列表页面信息。该列表不是总列表，一页最多列出2个服务器，需要点下一页
         '''
         server_group_heads_urls = response.xpath('//div[@class="col-lg-4 col-md"]//a/@href').getall() # ['/?q=ssh-servers', '/?q=ssh-servers&filter=extra', '/?q=ssh-servers&filter=one-month', '/?q=vpn-servers', '/?q=shadowsocks', '/?q=v2ray']
-        # print(server_group_heads_urls)
+        # logging.info(server_group_heads_urls)
         init_server_list_url = self.base_url + server_group_heads_urls[1] # 'https://serverssh.net/?q=ssh-servers&filter=extra'
         yield SshServerProviderHostItem({
             'provider_host': 'serverssh.net',
@@ -72,11 +72,11 @@ class SSHServers5Spider(scrapy.Spider):
             yield scrapy.Request(next_server_list_url, self.parse_server_list, headers={"referer":response.url})
 
         for i,available in enumerate(server_availables):
-            print('++++++++++++ server info ++++++++++++++')
-            print(f'region   : {server_regions[i]}')
-            print(f'host     : {server_hosts[i]}')
-            print(f'available: {available}')
-            print('+++++++++++++++++++++++++++++++++++++++')
+            logging.info('++++++++++++ server info ++++++++++++++')
+            logging.info(f'region   : {server_regions[i]}')
+            logging.info(f'host     : {server_hosts[i]}')
+            logging.info(f'available: {available}')
+            logging.info('+++++++++++++++++++++++++++++++++++++++')
             if available:
                 yield scrapy.Request(
                     server_urls[i], 
@@ -122,7 +122,7 @@ class SSHServers5Spider(scrapy.Spider):
             time.tzset()
         try:
             success_info = response.xpath('//li[@class="list-group-item py-3"]/font/b/text()').getall()
-            print(success_info)
+            logging.info(success_info)
             yield SshServerConfigItem({
                 'region'          : response.meta['region'],
                 'username'        : success_info[1].split(':')[-1].strip(),
@@ -140,6 +140,6 @@ class SSHServers5Spider(scrapy.Spider):
                     'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
                 })
             except Exception as e:
-                print(e)
+                logging.error(e)
                 with open(f'server5_{GlobalCounter.count()}.html', 'wb') as f:
                     f.write(response.body)

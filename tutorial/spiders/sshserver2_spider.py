@@ -1,11 +1,11 @@
-import scrapy, time
+import scrapy, time, logging
 from utils.common_tools import getRandStr, GlobalCounter
 from ..items import SshServerProviderHostItem, SshServerConfigItem
 from utils.ReCaptcha_Solvers import ReCaptcha_v2_Solver
 
-# scrapy crawl sshservers2
+# scrapy crawl sshserver2
 class SSHServers2Spider(scrapy.Spider):
-    name = "sshservers2"
+    name = "sshserver2"
     custom_settings = {
         'DOWNLOAD_DELAY': 3,
         "AUTOTHROTTLE_ENABLED" : True,
@@ -95,6 +95,6 @@ class SSHServers2Spider(scrapy.Spider):
                     'error_info'      : response.xpath('//div[@class="alert alert-warning"]/text()[2]').get().strip()
                 })
             except Exception as e:
-                print(e)
+                logging.error(e)
                 with open(f'server2_{GlobalCounter.count()}.html', 'wb') as f:
                     f.write(response.body)

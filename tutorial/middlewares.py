@@ -12,6 +12,7 @@ from utils.common_tools import GlobalCounter_arr
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
+import logging
 
 class TutorialSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -127,7 +128,7 @@ class DeferringDownloaderMiddleware(object):
         # delay = request.meta.get('delay_request', None)
         delay = request.meta.get('request_interval_secs', None)
         if delay:
-            print(f'===========等待{delay}s后爬取第{request.meta["cnt_crawled"]}个服务器==============')
+            logging.info(f'===========等待{delay}s后爬取第{request.meta["cnt_crawled"]}个服务器==============')
             d = Deferred()
             reactor.callLater(int(delay), d.callback, None)
             return d
