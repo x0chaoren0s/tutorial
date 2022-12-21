@@ -9,3 +9,6 @@ conda create -n spider python=3.7
 conda activate spider
 # Windows
 conda install -c conda-forge scrapy
+
+# streamlit web app
+conda install streamlit
