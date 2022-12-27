@@ -27,7 +27,7 @@ class SshServerWritingJsonPipeline:
     }
     
     def close_spider(self, spider):
-        self.replace_host_2_ip()
+        self._replace_host_2_ip()
         if platform.system() != 'Windows': # windows 没有 time.tzset()，但是 windows 一般时区是正确的，不用设置
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
@@ -56,7 +56,7 @@ class SshServerWritingJsonPipeline:
             host, ip = item['host'], item['ip']
             self.content_dict['host2ip'][host] = ip
     
-    def replace_host_2_ip(self):
+    def _replace_host_2_ip(self):
         ''' 有的网站其 host 不能用，而要使用 ip，如 www.vpnjantit.com 。该函数对没有 host2ip 信息的 host 不产生作用 '''
         for config in self.content_dict['configs']:
             if 'error_info' in config:
