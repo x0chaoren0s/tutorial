@@ -30,6 +30,7 @@ class SshServerConfigItem(scrapy.Item):
     date_created    = scrapy.Field()
     date_expired    = scrapy.Field()
     max_logins      = scrapy.Field()
+    now_logins      = scrapy.Field() # 爬虫并不用设置该字段，由json的使用方自行设置
     glider_config   = scrapy.Field() # forward=ssh://username:password@host:22  edit in class SshServerWritingJsonPipeline
     date_span       = scrapy.Field() # # 2022-07-12 - 2022-07-19
     error_info      = scrapy.Field()
