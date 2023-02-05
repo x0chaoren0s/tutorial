@@ -35,7 +35,7 @@ class SSHServers7Spider(scrapy.Spider):
         
         if len(server_selectors) < 1:
             yield SshServerProviderHostItem({
-                'provider_host': 'serverssh.net',
+                'provider_host': 'akunssh.net',
                 'list_url'     : 'https://akunssh.net/ssh-server-7?page=1'
             })
             return
