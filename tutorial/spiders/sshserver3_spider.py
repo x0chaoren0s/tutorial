@@ -131,16 +131,16 @@ class SSHServers3Spider(scrapy.Spider):
             os.environ['TZ']='GMT-8' # 设置成中国所在的东八区时区
             time.tzset()
         def normalize_date(datestr): # 如把 ' 17-07-2022' 标准化成 '2022-07-17'
-            return time.strftime("%Y-%m-%d",time.strptime(datestr," %d-%m-%Y"))
+            return time.strftime("%Y-%m-%d",time.strptime(datestr,"%d-%m-%Y"))
         try:
             # success_info = response.xpath('//div[@class="alert alert-success alert-dismissable"]/text()').getall()
             yield SshServerConfigItem({
                 'region'          : response.xpath('//h1/text()').get()[19:].strip(),
-                'username'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[2]/span/text()').get().split(': ')[-1],
-                'password'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[3]/span/text()').get().split(': ')[-1],
-                'host'            : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[1]/span/text()').get().split(': ')[-1],
+                'username'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[2]/span/text()').get().split(': ')[-1].strip(),
+                'password'        : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[3]/span/text()').get().split(': ')[-1].strip(),
+                'host'            : response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[1]/span/text()').get().split(': ')[-1].strip(),
                 'date_created'    : time.strftime("%Y-%m-%d",time.localtime()), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
-                'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[4]/span/text()').get().split(': ')[-1],),
+                'date_expired'    : normalize_date(response.xpath('//div[@class="alert alert-success alert-dismissable"]/li[4]/span/text()').get().split(': ')[-1].strip()),
                 # 'max_logins'      : response.xpath('//div[@class="alert alert-danger text-center"]/text()').get().split()[3]
                 'max_logins'      : '1'
             })
