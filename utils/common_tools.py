@@ -1,4 +1,5 @@
 import random, string, time
+from typing import Iterable
 
 # https://www.cnblogs.com/yaner2018/p/11269847.html
 #数字+字母+符号
@@ -33,7 +34,7 @@ class MyCounter:
 GlobalCounter = MyCounter()
 GlobalCounter_arr = [MyCounter() for _ in range(100)]
 
-def normalize_date(datestr: str, date_pattern: str, normalizing_pattern: str="%Y-%m-%d") -> str:
+def normalize_date(datestr: str, date_pattern: 'str | Iterable[str]', normalizing_pattern: str="%Y-%m-%d") -> str:
     """
     #### 可将网站给的时间日期格式转换成本项目采用的标准日期格式 "%Y-%m-%d"
     如把 ' 17-07-2022' 标准化成 '2022-07-17'
@@ -84,7 +85,12 @@ def normalize_date(datestr: str, date_pattern: str, normalizing_pattern: str="%Y
 
     %% A literal '%' character.
     """
-    return time.strftime(normalizing_pattern, time.strptime(datestr,date_pattern))
+    for pattern in [date_pattern] if isinstance(date_pattern, str) else date_pattern:
+        try:
+            return time.strftime(normalizing_pattern, time.strptime(datestr,pattern))
+        except:
+            pass
+    raise ValueError(f"time data '{datestr}' does not match any format in {[date_pattern] if isinstance(date_pattern, str) else date_pattern}")
 
 def normalized_local_date() -> str:
     '''
@@ -101,3 +107,5 @@ if __name__ == '__main__':
     # print(GlobalCounter.count(3))
     # print(normalized_local_date())
     print(normalize_date(' 17-07-2022'," %d-%m-%Y"))
+    print(normalize_date('2023-03-28 / 21:07:04',"%Y-%m-%d / %H:%M:%S"))
+    print(normalize_date('2023-03-28',["%Y-%m-%d", "%Y-%m-%d / %H:%M:%S"]))
