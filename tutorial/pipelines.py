@@ -53,7 +53,7 @@ class SshServerWritingJsonPipeline:
                 # item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item.get('ip', default=item['host'])}:{item['port']}" # 这个item就没有ip，ip在另外的item
                 item['date_span'] = f"# {item['date_created']} - {item['date_expired']}"
             self.content_dict['configs'].append(dict(item))
-            logging.info(f"[succeed] {item['glider_config']}" if 'error_info' not in item \
+            logging.info(f"[succeed] {item['region']}, {item['glider_config']}" if 'error_info' not in item \
                          else f"[failed] {item['region']}, {item.get('host',default='no host')}, {item['error_info']}")
         elif isinstance(item, Host2IpItem):
             host, ip = item['host'], item['ip']
