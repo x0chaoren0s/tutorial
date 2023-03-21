@@ -1,14 +1,15 @@
 # https://yescaptcha.atlassian.net/wiki/spaces/YESCAPTCHA/pages/4587548/Python+DEMO+requests+requests+demo.py
 
 import time, requests
+from multiprocessing import Process
 
 
 class ReCaptcha_v2_Solver:
     def __init__(
         self,
         clientKey = "ddd1cf72d9955a0e8ca7d05597fea5eb1dce33de5331", # clientKey：在个人中心获取
-        sleep_sec = 3, # 循环请求识别结果，sleep_sec 秒请求一次
-        max_sec = 120  # 最多等待 max_sec 秒
+        sleep_sec = 4, # 循环请求识别结果，sleep_sec 秒请求一次
+        max_sec = 180  # 最多等待 max_sec 秒
     ) -> None:
         self.clientKey = clientKey
         self.sleep_sec = sleep_sec
@@ -81,6 +82,7 @@ class ReCaptcha_v2_Solver:
         
     def __call__(self, websiteURL, websiteKey) -> str:
         return self.solve(websiteURL, websiteKey)
+        # Process(target=self.solve, args=[websiteURL, websiteKey])
 
 if __name__ == '__main__':
-    print(ReCaptcha_v2_Solver().solve('https://vpnhack.com/v2ray/canada/ca1', '6LczFssUAAAAAFEgmWV11U6DiUKKCwoxUxqf6Hse'))
+    print(ReCaptcha_v2_Solver().solve('https://www.fastssh.com/page/create-ssh-cdn-websocket/server/9001224/ssh-ws-sg-udpgw/', '6LcpDQ8UAAAAAGcJOV1eC9WuOM6meGgn5-rVINkC'))
