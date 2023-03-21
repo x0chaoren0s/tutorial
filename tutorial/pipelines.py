@@ -50,11 +50,15 @@ class SshServerWritingJsonPipeline:
                 if 'port' not in item:
                     item['port'] = '22'
                 item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item['host']}:{item['port']}"
+                # item['glider_config'] = f"forward=ssh://{item['username']}:{item['password']}@{item.get('ip', default=item['host'])}:{item['port']}" # 这个item就没有ip，ip在另外的item
                 item['date_span'] = f"# {item['date_created']} - {item['date_expired']}"
             self.content_dict['configs'].append(dict(item))
+            logging.info(f"[succeed] {item['glider_config']}" if 'error_info' not in item \
+                         else f"[failed] {item['region']}, {item.get('host',default='no host')}, {item['error_info']}")
         elif isinstance(item, Host2IpItem):
             host, ip = item['host'], item['ip']
             self.content_dict['host2ip'][host] = ip
+            logging.info(f"[host-ip] {host} - {ip}")
     
     def _replace_host_2_ip(self):
         ''' 有的网站其 host 不能用，而要使用 ip，如 www.vpnjantit.com 。该函数对没有 host2ip 信息的 host 不产生作用 '''
