@@ -114,6 +114,9 @@ class DeferringDownloaderMiddleware(object):
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
 
+    def __init__(self) -> None:
+        self.cnt_crawled = 0
+
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
@@ -128,8 +131,11 @@ class DeferringDownloaderMiddleware(object):
         # delay = request.meta.get('delay_request', None)
         delay = request.meta.get('request_interval_secs', None)
         if delay:
-            logging.info(f'===========等待{delay}s后爬取第{request.meta["cnt_crawled"]}个服务器==============')
+            # logging.info(f'===========等待{delay}s后爬取第{request.meta["cnt_crawled"]}个服务器==============')
+            logging.info(f'===========等待{delay}s后爬取第{self.cnt_crawled}个服务器==============')
             d = Deferred()
-            reactor.callLater(int(delay), d.callback, None)
+            # reactor.callLater(int(delay), d.callback, None)
+            reactor.callLater(int(delay) if self.cnt_crawled else 0, d.callback, None)
+            self.cnt_crawled += 1
             return d
         return None
