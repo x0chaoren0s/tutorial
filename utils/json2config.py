@@ -3,6 +3,10 @@
 '''
 
 import os, json
+try:
+    from common_tools import normalize_date
+except:
+    from utils.common_tools import normalize_date
 
 class ConfigBuilder:
     def __init__(self, config_path) -> None:
@@ -41,9 +45,13 @@ class ConfigBuilder:
                 config.setdefault('now_logins', '0')
                 if int(config['now_logins']) >= int(config['max_logins']):
                     continue
-                ret.setdefault(config['date_span'], dict())
-                ret[config['date_span']].setdefault(config['region'], [])
-                ret[config['date_span']][config['region']].append(config['glider_config'])
+                date_beg, date_end = config['date_span'].split('# ')[1].split(' - ') # '# 2023-03-21 - 2023-03-28',  "# 2023-03-21 - 2023-03-28 / 21:12:52"
+                date_beg = normalize_date(date_beg, ["%Y-%m-%d", "%Y-%m-%d / %H:%M:%S"])
+                date_end = normalize_date(date_end, ["%Y-%m-%d", "%Y-%m-%d / %H:%M:%S"])
+                date_span = f'# {date_beg} - {date_end}'
+                ret.setdefault(date_span, dict())
+                ret[date_span].setdefault(config['region'], [])
+                ret[date_span][config['region']].append(config['glider_config'])
                 config['now_logins'] = f'{int(config["now_logins"])+1}'
             with open(jpath, 'w') as fout:
                 json.dump(jdict, fout, indent=4)
