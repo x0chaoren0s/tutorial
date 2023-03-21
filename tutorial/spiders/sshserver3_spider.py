@@ -147,8 +147,8 @@ class SSHServers3Spider(scrapy.Spider):
         except Exception as e:
             try:
                 yield SshServerConfigItem({
-                    'region'          : response.xpath('//h1/text()').get().split()[-1],
-                    'host'            : response.xpath('//table[@class="table table-hover"]/tbody/tr[1]/td/text()').get().strip(),
+                    'region'          : response.xpath('//title/text()').get()[9:-27], # Free SSH France 235 7 Days - Jagoanssh.com
+                    'host'            : response.xpath('//meta[@name="description"]/@content').get().split('hostname: ')[-1].split(',')[0], # "Free Premium SSH Tunnel France  7 days hostname: fr1-7.ipservers.xyz, supports connections: SSH websocket France  7 days, SSH SSL France  7 days, SSH Dropbear France  7 days, SSH WS SSL 7 days"
                     'error_info'      : response.xpath('//div[@class="alert alert-danger alert-dismissable"]/text()[3]').get().strip()
                 })
             except Exception as e:

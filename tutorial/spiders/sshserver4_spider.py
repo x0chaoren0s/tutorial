@@ -9,7 +9,7 @@ class SSHServers4Spider(scrapy.Spider):
     base_url = "https://www.vpnjantit.com"
     CRAWLED_IDX = 0
     OMMITED_IDX = 1
-    fillingForm_interval_secs = 60*1+2 # 该网站要求 1 min 后才能创建下一个新用户
+    fillingForm_interval_secs = 30*9+2 # 该网站要求 few mins 后才能创建下一个新用户
     # fillingForm_interval_secs = 0 # 该网站要求 1 min 后才能创建下一个新用户
     
     custom_settings = {
@@ -30,7 +30,7 @@ class SSHServers4Spider(scrapy.Spider):
     def start_requests(self):
         list_url = 'https://www.vpnjantit.com/free-ssh-7-days'
         # yield scrapy.Request(list_url, self.parse, headers={"referer":self.base_url})
-        yield scrapy.Request(self.base_url, self.parse, headers={"referer":self.base_url}) 
+        yield scrapy.Request(list_url, self.parse, headers={"referer":self.base_url}) 
 
     def parse(self, response):
         '''
@@ -45,7 +45,7 @@ class SSHServers4Spider(scrapy.Spider):
             'list_url'      : response.url
         })
 
-        server_htmls = response.xpath('//div[@class="col-lg-3 col-md-6 "]').getall()
+        server_htmls = response.xpath('//div[@class="col-lg-3 col-md-6"]').getall()
         server_Selectors = [scrapy.Selector(text=html) for html in server_htmls]
         server_availables = [s.xpath('//font[@size="5"]/text()').get() for s in server_Selectors] # ['Available'/'MAINTENANCE', ...]
         server_availables = [avai=='Available' for avai in server_availables] # [True/False, ...]
@@ -53,12 +53,12 @@ class SSHServers4Spider(scrapy.Spider):
         server_urls = [self.base_url+url for url in server_urls] # ['https://www.vpnjantit.com/create-free-account?server=ae1&type=SSH', ...]
         server_showIP_urls = [s.xpath('//a[@target="_blank"]/@href').get() for s in server_Selectors] # ['/host-to-ip?host=ae1.vpnjantit.com', ...]
         server_showIP_urls = [self.base_url+url for url in server_showIP_urls] # ['https://www.vpnjantit.com/host-to-ip?host=ae1.vpnjantit.com', ...]
-        server_regions = [s.xpath('//div[@class="text-center"]/text()').getall()[2].split('Location')[1].strip() for s in server_Selectors]
-        server_hosts = [s.xpath('//div[@class="text-center"]/text()').getall()[3].strip() for s in server_Selectors]
+        server_regions = [s.xpath('//li[1]/text()').get().strip() for s in server_Selectors]
+        server_hosts = [s.xpath('//li[2]/text()').get().strip() for s in server_Selectors]
 
         for i,available in enumerate(server_availables):
             if available:
-                logging.info(f'-----------available: {server_hosts[i]}')
+                # logging.info(f'-----------available: {server_hosts[i]}')
                 yield scrapy.Request(
                     server_urls[i], 
                     self.parse_server_before_fillingForm, 
@@ -82,8 +82,8 @@ class SSHServers4Spider(scrapy.Spider):
     
     def parse_host2ip(self, response):
         _ = response.xpath('//font[@color="green"]/text()').getall() # ['Name host: ae1.vpnjantit.com', '\nIP address: \n147.78.0.131 ']
-        host = _[0].split(' ')[2] # 'ae1.vpnjantit.com'
-        ip = _[1].split()[-1] # '147.78.0.131'
+        host = _[0].split(':')[-1].strip() # 'ae1.vpnjantit.com'
+        ip = _[1].split(':')[-1].strip() # '147.78.0.131'
         yield Host2IpItem({
             'host'  : host,
             'ip'    : ip
@@ -93,7 +93,7 @@ class SSHServers4Spider(scrapy.Spider):
         ''' 填表以及通过 recaptcha '''
         websiteKey = response.xpath('//div[@class="g-recaptcha"]/@data-sitekey').get()
         recaptcha_res = ReCaptcha_v2_Solver()(response.url, websiteKey)
-        host = response.xpath('//h5[4]/text()').get().strip()   # br2.vpnjantit.com
+        host = response.xpath('//h5[2]/text()').get().strip()   # br2.vpnjantit.com
         host_area = host.split('.')[0]  # br2
         yield scrapy.FormRequest.from_response(
             response,
@@ -116,10 +116,10 @@ class SSHServers4Spider(scrapy.Spider):
                 'region'          : success_info[3].strip(),
                 'username'        : success_info[0].strip(),
                 'password'        : success_info[1].strip(),
-                'host'            : success_info[6].strip(),
+                'host'            : success_info[4].strip(),
                 'date_created'    : time.strftime("%Y-%m-%d",time.localtime()), # 这个网址不显示账户的注册时间，所以自己填。但其实不太准确，因为不知道网站的显示的到期时间是用什么时区
                 'date_expired'    : success_info[2].strip(),
-                'max_logins'      : success_info[4].strip()[0]
+                'max_logins'      : success_info[9].split(' ')[0]
             })
         except:
             try:
